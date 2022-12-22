@@ -1,7 +1,7 @@
 from typing import List
 from fastapi import Depends, HTTPException, status, APIRouter
 from psycopg2 import IntegrityError
-from app import models, schemas
+from app import models, schemas, oauth2
 from app.database import get_db
 from sqlalchemy.orm import session
 
@@ -39,7 +39,7 @@ async def register_user(user:schemas.UserCreate, db: session = Depends(get_db)):
 
 
 @router.get('/', description='get all users', response_model = List[schemas.UserResponse])
-async def get_all_users(db:session= Depends(get_db)):
+async def get_all_users(db:session= Depends(get_db), current_user:int  = Depends(oauth2.get_current_user_logged_in)):
     _user = db.query(models.User).all()
     if not _user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='no users registered')

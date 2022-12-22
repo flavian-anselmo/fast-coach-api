@@ -29,10 +29,23 @@ class UserResponse(BaseModel):
 
 
 class TokenResponse(BaseModel):
+    '''
+    payload returned with accessToken 
+    {
+        accessToken:'xxxxx'
+        Type:""Bearer
+    }
+    '''
     access_token:str
     type:str
     class Config:
         orm_mode = True
     
 class TokenPayLoad(BaseModel):
+    '''
+    payload sent to get the accessToken 
+    {
+        "user_id":user_id 
+    }
+    '''
     user_id:int
