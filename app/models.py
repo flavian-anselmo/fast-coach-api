@@ -70,25 +70,27 @@ class TravelRoute(Base):
 
 
 
-class Depature(Base):
-    '''
-    this is what is sent to the user displaying when a bus is leaving and the 
-    route its taking 
+# class Depature(Base):
+#     __tablenae__ ="depature_tbl"
+#     '''
+#     this is what is sent to the user displaying when a bus is leaving and the 
+#     route its taking 
 
-    '''
-
-
-    pass 
+#     '''
 
 
+#     pass 
 
 
-class Payments(Base):
-    '''
-    payments 
 
-    '''
-    pass 
+
+# class Payments(Base):
+#     __tablename__ = "payments_tbl"
+#     '''
+#     payments 
+
+#     '''
+#     pass 
 
 
 
