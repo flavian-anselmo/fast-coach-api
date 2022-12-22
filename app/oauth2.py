@@ -47,6 +47,9 @@ def verify_access_token(token:str, credential_exceptions):
     try:
         payload:dict = jwt.decode(token, SECRET_KEY, ALGORITHM)
         user_id:int = payload.get("user_id")
+        exp_date:datetime = payload.get("expiry_time")
+        if datetime.fromtimestamp(exp_date) < datetime.now():
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Token Expired', headers={"WWW-Authenticate": "Bearer"})
         if user_id is None:
             raise credential_exceptions
         token_data = schemas.TokenPayLoad(user_id = user_id)   

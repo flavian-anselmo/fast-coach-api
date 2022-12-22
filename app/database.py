@@ -16,6 +16,10 @@ Base = declarative_base()
 
 # dependancy 
 def get_db():
+    '''
+    database dependancy for any endpont making a query to the db 
+
+    '''
     # session instance 
     db = SessionLocal()
     try:

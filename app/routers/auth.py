@@ -19,6 +19,8 @@ async def login(user_creds: OAuth2PasswordRequestForm = Depends(), db:session = 
     compare the emails too check whether they match 
     if yes we have a user .. if no we have invalid creds 
 
+    this endpoint depends on OAuth2PasswordRequestForm 
+
     '''
     user = db.query(models.User).filter(models.User.email == user_creds.username).first()
     if not user:

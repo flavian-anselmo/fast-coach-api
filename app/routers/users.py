@@ -28,6 +28,7 @@ async def register_user(user:schemas.UserCreate, db: session = Depends(get_db)):
         db.add(new_user)
         db.commit()
         db.refresh(new_user)
+        print('passenger acc')
         return new_user 
     except:
         raise HTTPException(status_code = status.HTTP_409_CONFLICT, detail = f'user with email {user.email} already exists')
