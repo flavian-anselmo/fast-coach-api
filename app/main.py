@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from . import models
 from app.database import engine
-from app.routers import users
+from app.routers import users, auth
 
 models.Base.metadata.create_all(bind=engine)# create tbls for us 
 
@@ -28,6 +28,7 @@ app = FastAPI(
 
 
 app.include_router(users.router)
+app.include_router(auth.router)
 
 @app.get("/")
 def read_root():

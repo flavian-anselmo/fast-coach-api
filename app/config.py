@@ -6,6 +6,9 @@ class Settings(BaseSettings):
     database_password:str
     database_name:str 
     database_username: str 
+    algorithm: str 
+    secret_key:str
+    
     
 
     class Config:
