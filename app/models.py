@@ -62,7 +62,8 @@ class Bus(Base):
 class TravelRoute(Base):
     '''
     define a route for a specifific bus eg a specific bus travels from nairobi to mombasa 
-    
+    Admin capabilities 
+
 
     '''
     __tablename__ = "travel_route_tbl"
@@ -73,16 +74,20 @@ class TravelRoute(Base):
 
 
 
-# class Depature(Base):
-#     __tablenae__ ="depature_tbl"
-#     '''
-#     this is what is sent to the user displaying when a bus is leaving and the 
-#     route its taking 
+class Depature(Base):
+    __tablename__ ="depature_tbl"
+    '''
+    this is what is sent to the user displaying when a bus is leaving and the 
+    route its taking 
 
-#     '''
+    '''
 
+    dep_id = Column(Integer, primary_key = True, nullable = False )
+    seats_available = Column(Integer, nullable =  False)
+    booked_seats = Column(Integer, nullable = True)
+    
 
-#     pass 
+ 
 
 
 

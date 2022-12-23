@@ -23,7 +23,8 @@ def create_access_token (payload:dict):
 
     '''
     expire_time = datetime.utcnow() + timedelta(minutes = ACCESS_TOKEN_EXPIRATION_TIME)
-    to_encode_payload.update({'expiry_time':expire_time})
+    print(expire_time)
+    to_encode_payload.update({'exp':expire_time})
 
     encoded_jwt = jwt.encode(to_encode_payload, SECRET_KEY, ALGORITHM)
     return encoded_jwt 
@@ -46,8 +47,8 @@ def verify_access_token(token:str, credential_exceptions):
     '''
     try:
         payload:dict = jwt.decode(token, SECRET_KEY, ALGORITHM)
-        user_id:int = payload.get("user_id")
-        exp_date:datetime = payload.get("expiry_time")
+        user_id:int = payload.get('user_id')
+        exp_date:datetime = payload.get("exp")
         if datetime.fromtimestamp(exp_date) < datetime.now():
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Token Expired', headers={"WWW-Authenticate": "Bearer"})
         if user_id is None:

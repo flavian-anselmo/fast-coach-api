@@ -44,7 +44,7 @@ class TokenResponse(BaseModel):
     '''
     access_token:str
     type:str
-    class Config:
+    class Config:        
         orm_mode = True
     
 class TokenPayLoad(BaseModel):
@@ -55,3 +55,39 @@ class TokenPayLoad(BaseModel):
     }
     '''
     user_id:int
+
+class TravelRouteCreate(BaseModel):
+    '''
+    creating a travel route for a bus 
+
+    ''' 
+    leaving_from: str
+    going_to: str 
+    price: float
+    
+
+
+class TravelRouteResponse(TravelRouteCreate):
+    '''
+    response when getting routes posted 
+    inherits from original travel toute 
+
+    '''
+    route_id:int 
+    class Config:
+        orm_mode = True
+  
+
+
+class BusCreate(BaseModel):
+    bus_name: str
+    no_of_seats: int 
+    seat_arrangement: str
+
+
+class BusResponse(BusCreate):
+    bus_id:int 
+    class Config:
+        orm_mode = True
+
+        

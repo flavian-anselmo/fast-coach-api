@@ -1,7 +1,7 @@
 from typing import List
 from fastapi import Depends, HTTPException, status, APIRouter
 from psycopg2 import IntegrityError
-from app import models, schemas, oauth2
+from app import models, schemas, oauth2, utils
 from app.database import get_db
 from sqlalchemy.orm import session
 
@@ -18,12 +18,14 @@ router = APIRouter(
 
 
 @router.post('/', status_code = status.HTTP_201_CREATED, response_model = schemas.UserResponse, description = ' user registration or sign-up')
-async def register_user(user:schemas.UserCreate, db: session = Depends(get_db)):
+async def register_user(user:schemas.UserCreate, db: session = Depends(get_db), ):
     '''
     register user into the system -> (passengers)
 
     '''
     try:
+        hash_password  = utils.get_hashed_password(user.password)
+        user.password = hash_password
         new_user = models.User(**user.dict())
         db.add(new_user)
         db.commit()

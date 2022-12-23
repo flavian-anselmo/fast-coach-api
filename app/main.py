@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from . import models
 from app.database import engine
-from app.routers import users, auth
+from app.routers import users, auth, admin
 
 models.Base.metadata.create_all(bind=engine)# create tbls for us 
 
@@ -26,10 +26,13 @@ app = FastAPI(
 
 
 
+# routers 
 
 app.include_router(users.router)
 app.include_router(auth.router)
+app.include_router(admin.router)
 
+# root 
 @app.get("/")
 def read_root():
     return {"message": "fast-coach-api"}

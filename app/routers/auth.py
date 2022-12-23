@@ -23,6 +23,7 @@ async def login(user_creds: OAuth2PasswordRequestForm = Depends(), db:session = 
 
     '''
     user = db.query(models.User).filter(models.User.email == user_creds.username).first()
+    print(user)
     if not user:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Invalid credentials')
     if not utils.verify_password(user_creds.password, user.password):
@@ -32,7 +33,7 @@ async def login(user_creds: OAuth2PasswordRequestForm = Depends(), db:session = 
     access_token = oauth2.create_access_token(payload = {"user_id": user.user_id})
     # return the accesstoken 
     login_data =  {
-        "accessToken": access_token,
-        "Type": "Bearer"
+        "access_token": access_token,
+        "type": "Bearer"
     } 
     return  login_data
