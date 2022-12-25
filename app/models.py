@@ -1,6 +1,7 @@
 from sqlalchemy import TIMESTAMP, Boolean, Column, ForeignKey, Integer, String, Float
 from sqlalchemy.sql.expression import text
 from app.database import Base
+from sqlalchemy.orm import relationship
 
 
 
@@ -22,6 +23,10 @@ class BookTicket(Base):
     seat_no = Column(String, nullable = False)
     # travel_date = Column(TIMESTAMP(timezone = True), nullable = False)
     created_at = Column(TIMESTAMP(timezone = True), nullable = False, server_default = text('now()'))
+    passenger_id = Column(Integer, ForeignKey('users_tbl.user_id', ondelete="CASCADE"), nullable = False)
+    passenger = relationship("User")
+
+
 
 
 
@@ -44,21 +49,6 @@ class User(Base):
 
 
 
-
-class Bus(Base):
-    '''
-    Admin at fast coach will be  registering new buses 
-
-    '''
-    __tablename__ = "bus_tbl"
-    bus_id = Column(Integer, primary_key = True, nullable = False)
-    bus_name = Column(String, nullable = False, unique = True)
-    no_of_seats = Column(Integer, nullable = False)
-    seat_arrangement = Column(String, nullable = False)
-
-
-
-
 class TravelRoute(Base):
     '''
     define a route for a specifific bus eg a specific bus travels from nairobi to mombasa 
@@ -71,6 +61,23 @@ class TravelRoute(Base):
     leaving_from = Column(String, nullable = False)
     going_to = Column(String, nullable = False)
     price = Column(Float, nullable = False)
+
+class Bus(Base):
+    '''
+    Admin at fast coach will be  registering new buses 
+
+    '''
+    __tablename__ = "bus_tbl"
+    bus_id = Column(Integer, primary_key = True, nullable = False)
+    bus_name = Column(String, nullable = False)
+    no_of_seats = Column(Integer, nullable = False)
+    seat_arrangement = Column(String, nullable = False)
+    route_id = Column(Integer, ForeignKey('travel_route_tbl.route_id', ondelete="CASCADE"), nullable = False)
+    route = relationship('TravelRoute')
+
+
+
+
 
 
 
@@ -87,7 +94,7 @@ class Depature(Base):
     booked_seats = Column(Integer, nullable = True)
     
 
- 
+
 
 
 

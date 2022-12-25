@@ -74,20 +74,29 @@ class TravelRouteResponse(TravelRouteCreate):
 
     '''
     route_id:int 
+
     class Config:
         orm_mode = True
   
 
 
 class BusCreate(BaseModel):
+    route_id: int
     bus_name: str
     no_of_seats: int 
     seat_arrangement: str
 
 
 class BusResponse(BusCreate):
+    '''
+    travel route of the specific bus 
+    
+    '''
     bus_id:int 
+    route_id:int 
+    route: TravelRouteResponse
     class Config:
         orm_mode = True
 
-        
+
+
