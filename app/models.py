@@ -61,6 +61,10 @@ class TravelRoute(Base):
     leaving_from = Column(String, nullable = False)
     going_to = Column(String, nullable = False)
     price = Column(Float, nullable = False)
+    user_id = Column(Integer, ForeignKey('users_tbl.user_id', ondelete='CASCADE'), nullable = False)
+    user = relationship('User')
+    
+
 
 class Bus(Base):
     '''
@@ -74,6 +78,8 @@ class Bus(Base):
     seat_arrangement = Column(String, nullable = False)
     route_id = Column(Integer, ForeignKey('travel_route_tbl.route_id', ondelete="CASCADE"), nullable = False)
     route = relationship('TravelRoute')
+    user_id = Column(Integer, ForeignKey('users_tbl.user_id', ondelete='CASCADE'), nullable = False)
+    user = relationship('User')
 
 
 

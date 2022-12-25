@@ -94,7 +94,9 @@ class BusResponse(BusCreate):
     '''
     bus_id:int 
     route_id:int 
+    user_id:int 
     route: TravelRouteResponse
+    user: UserResponse
     class Config:
         orm_mode = True
 

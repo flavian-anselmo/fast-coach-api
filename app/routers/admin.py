@@ -29,7 +29,7 @@ from app import models, schemas, oauth2
 router = APIRouter(
   
     prefix = '/admin',
-    tags = ['Admin endpoints']
+    tags = ['Admin (buses & routes)']
 )
 
 
