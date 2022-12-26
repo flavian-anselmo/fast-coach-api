@@ -25,12 +25,12 @@ async def register_user(user:schemas.UserCreate, db: session = Depends(get_db), 
     '''
     try:
         hash_password  = utils.get_hashed_password(user.password)
+        # set the hashed password 
         user.password = hash_password
         new_user = models.User(**user.dict())
         db.add(new_user)
         db.commit()
         db.refresh(new_user)
-        print('passenger acc')
         return new_user 
     except:
         raise HTTPException(status_code = status.HTTP_409_CONFLICT, detail = f'user with email {user.email} already exists')
@@ -42,7 +42,7 @@ async def register_user(user:schemas.UserCreate, db: session = Depends(get_db), 
 
 
 @router.get('/', description='get all users', response_model = List[schemas.UserResponse])
-async def get_all_users(db:session= Depends(get_db), current_user:int  = Depends(oauth2.get_current_user_logged_in)):
+async def get_all_users(db:session= Depends(get_db), current_user:int  = Depends(oauth2.get_current_user_logged_in), ):
     _user = db.query(models.User).all()
     if not _user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='no users registered')
@@ -54,7 +54,7 @@ async def get_all_users(db:session= Depends(get_db), current_user:int  = Depends
 
 
 @router.get('/{user_id}', status_code = status.HTTP_200_OK, response_model = schemas.UserResponse, description = 'get one user or curret user')
-async def get_user_by_id(user_id:int , db: session = Depends(get_db)):
+async def get_user_by_id(user_id:int , db: session = Depends(get_db), curr_user:int = Depends(oauth2.get_current_user_logged_in)):
 
     _user = db.query(models.User).filter(models.User.user_id == user_id).first()
     if not _user:

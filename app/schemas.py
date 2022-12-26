@@ -24,7 +24,6 @@ class UserResponse(BaseModel):
     '''
     user_id :int
     email: EmailStr
-    password:str
     is_passenger:bool
     is_driver:bool
     is_admin:bool
@@ -61,6 +60,7 @@ class TravelRouteCreate(BaseModel):
     creating a travel route for a bus 
 
     ''' 
+    user_id:int
     leaving_from: str
     going_to: str 
     price: float
@@ -74,6 +74,7 @@ class TravelRouteResponse(TravelRouteCreate):
 
     '''
     route_id:int 
+    user_id:int 
 
     class Config:
         orm_mode = True
@@ -101,4 +102,20 @@ class BusResponse(BusCreate):
         orm_mode = True
 
 
+class BookTicketCreate(BaseModel):
+    ticket_id:int
+    passenger_id:int 
+    bus_id: int  
+    leaving_from: str
+    going_to:str
+    seat_no: str
+    travel_type:str
+
+class BookTicketResponse(BookTicketCreate):
+    is_paid:bool
+    travel_status:str
+    bus: BusResponse
+    passenger:UserResponse
+    class Config:
+        orm_mode = True
 

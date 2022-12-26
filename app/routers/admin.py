@@ -12,8 +12,6 @@ TODO: GET SPEPCIFIC ROUTE
 TODO: creat routes --> done 
 TODO: CREATE BUSES --> done 
 
-
-
 '''
 
 
@@ -111,7 +109,7 @@ async def get_all_buses(db:session = Depends(get_db), curr_user:int = Depends(oa
     get all the registered buses together with the route they take 
 
     '''
-    buses  = db.query(models.TravelRoute).all()
+    buses  = db.query(models.Bus).all()
 
     if not buses:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='no bus routes available')

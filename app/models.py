@@ -25,6 +25,8 @@ class BookTicket(Base):
     created_at = Column(TIMESTAMP(timezone = True), nullable = False, server_default = text('now()'))
     passenger_id = Column(Integer, ForeignKey('users_tbl.user_id', ondelete="CASCADE"), nullable = False)
     passenger = relationship("User")
+    bus_id = Column(Integer, ForeignKey('bus_tbl.bus_id', ondelete='CASCADE'), nullable = False)
+    bus = relationship('Bus')
 
 
 

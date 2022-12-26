@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from . import models
 from app.database import engine
-from app.routers import users, auth, admin
+from app.routers import users, auth, admin, bookings
 
 models.Base.metadata.create_all(bind=engine)# create tbls for us 
 
@@ -31,6 +31,7 @@ app = FastAPI(
 app.include_router(users.router)
 app.include_router(auth.router)
 app.include_router(admin.router)
+app.include_router(bookings.router)
 
 # root 
 @app.get("/")
