@@ -32,7 +32,7 @@ router = APIRouter(
 
 
 
-
+#----------------------------------------------------[ROUTE ENDPOINTS]---------------------------------------------------------------------------------------
 
 @router.post('/routes', status_code = status.HTTP_201_CREATED, response_model=schemas.TravelRouteResponse)
 async def create_bus_route(route:schemas.TravelRouteCreate, db:session = Depends(get_db), curr_user:int = Depends(oauth2.get_current_user_logged_in)):
@@ -41,7 +41,7 @@ async def create_bus_route(route:schemas.TravelRouteCreate, db:session = Depends
     admin will be adding bus routes 
 
     '''
-    new_route = models.TravelRoute(**route.dict())
+    new_route = models.TravelRoute(**route.dict(), user_id = curr_user.user_id)
     db.add(new_route)
     db.commit()
     db.refresh(new_route)
@@ -76,6 +76,28 @@ async def get_route_by_id(route_id:int, curr_user:int = Depends(oauth2.get_curre
     return route    
 
 
+@router.put('/route/{route_id}', response_model=schemas.TravelRouteResponse)
+async def update_route(route_id:int, route_update:schemas.TravelRouteCreate, db:session = Depends(get_db), curr_user:int = Depends(oauth2.get_current_user_logged_in)):
+    '''
+    update route 
+
+    '''
+    update_route = db.query(models.TravelRoute).filter(models.TravelRoute.route_id == route_id)
+
+    route = update_route.first()
+
+    if route == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='route not found')  
+
+    update_route.update(
+        # update 
+        route_update.dict(),
+        synchronize_session = False
+    )  
+    # commit changes 
+    db.commit()
+    return update_route.first()
+
 
 @router.delete('/routes/{route_id}')
 async def delete_route(route_id:int, db:session = Depends(get_db), curr_user:int = Depends(oauth2.get_current_user_logged_in)):
@@ -88,14 +110,15 @@ async def delete_route(route_id:int, db:session = Depends(get_db), curr_user:int
     db.commit()    
     return {"detail": "deleted route sucessfully "}
 
-
+# -------------------------------- [BUS ENDPOINTS]------------------------------------------------------------------------------------------------------ 
 
 @router.post('/buses', status_code=status.HTTP_201_CREATED, response_model=schemas.BusResponse)
 async def create_bus (bus:schemas.BusCreate,db:session = Depends(get_db), curr_user:int = Depends(oauth2.get_current_user_logged_in)):
     '''
     create a new bus 
     '''
-    new_bus = models.Bus(**bus.dict())
+    new_bus = models.Bus(**bus.dict(), user_id = curr_user.user_id)
+
     db.add(new_bus)
     db.commit()
     db.refresh(new_bus)
@@ -128,6 +151,29 @@ async def get_bus_by_id(bus_id:int, curr_user:int = Depends(oauth2.get_current_u
     if not bus:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='no bus route available')
     return bus  
+
+@router.put('/buses', response_model=schemas.BusResponse)
+async def update_bus(bus_id:int, bus_update:schemas.BusCreate, db:session = Depends(get_db), curr_user:int = Depends(oauth2.get_current_user_logged_in)):
+    '''
+    update the buses 
+
+    '''
+    update_bus = db.query(models.Bus).filter(models.Bus.bus_id == bus_id)
+
+    bus = update_bus.first()
+
+    if bus== None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='bus not found')  
+          
+    update_bus.update(
+        # update 
+        bus_update.dict(),
+        synchronize_session = False 
+    )  
+    # commit changes 
+    db.commit()
+    return update_bus.first()
+
 
 
 

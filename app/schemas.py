@@ -60,7 +60,6 @@ class TravelRouteCreate(BaseModel):
     creating a travel route for a bus 
 
     ''' 
-    user_id:int
     leaving_from: str
     going_to: str 
     price: float
@@ -74,7 +73,6 @@ class TravelRouteResponse(TravelRouteCreate):
 
     '''
     route_id:int 
-    user_id:int 
 
     class Config:
         orm_mode = True
@@ -118,4 +116,5 @@ class BookTicketResponse(BookTicketCreate):
     passenger:UserResponse
     class Config:
         orm_mode = True
+
 
