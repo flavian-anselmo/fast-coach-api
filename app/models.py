@@ -99,8 +99,7 @@ class Depature(Base):
 
     dep_id = Column(Integer, primary_key = True, nullable = False )
     seats_available = Column(Integer, nullable =  False)
-    booked_seats = Column(Integer, nullable = True)
-    
+        
 
 
 

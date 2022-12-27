@@ -51,8 +51,6 @@ async def get_all_users(db:session= Depends(get_db), current_user:int  = Depends
 
 
 
-
-
 @router.get('/{user_id}', status_code = status.HTTP_200_OK, response_model = schemas.UserResponse, description = 'get one user or curret user')
 async def get_user_by_id(user_id:int , db: session = Depends(get_db), curr_user:int = Depends(oauth2.get_current_user_logged_in)):
 
@@ -63,5 +61,28 @@ async def get_user_by_id(user_id:int , db: session = Depends(get_db), curr_user:
 
 
 
+
+
+# @router.put('/', response_model=schemas.UserResponse)
+# async  def update_profile(profile_update:schemas.UserCreate, db:session =  Depends(get_db), curr_user:int = Depends(oauth2.get_current_user_logged_in)):
+#     '''
+#     update profile 
+
+#     '''
+#     update_profile = db.query(models.TravelRoute).filter(models.User.user_id == curr_user.user_id )
+
+#     profile = update_profile.first()
+
+#     if profile == None:
+#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='route not found')  
+
+#     update_profile.update(
+#         # update 
+#         profile_update.dict(),
+#         synchronize_session = False
+#     )  
+#     # commit changes 
+#     db.commit()
+#     return update_profile.first()
 
 

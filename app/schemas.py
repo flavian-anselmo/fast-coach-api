@@ -116,5 +116,3 @@ class BookTicketResponse(BookTicketCreate):
     passenger:UserResponse
     class Config:
         orm_mode = True
-
-
