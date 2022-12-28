@@ -35,12 +35,17 @@ async def reduce_no_seats(bus_id:int, db:session):
     get the bus id to acess the exact bus 
 
     '''
-    seat = db.query(models.Bus).filter(models.Bus.bus_id == bus_id).first()
-    seat.no_of_seats = seat.no_of_seats - 1
-    db.commit()
-    db.refresh(seat)
-    return seat 
-
+    try:
+        seat = db.query(models.Bus).filter(models.Bus.bus_id == bus_id).first()
+        if seat.no_of_seats != None:
+            # if the seats availability is not zero 
+            seat.no_of_seats = seat.no_of_seats - 1
+            db.commit()
+            db.refresh(seat)
+            return seat 
+        return {'message':'The bus is fully booked'}    
+    except:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='unexpected error')
     
 
 

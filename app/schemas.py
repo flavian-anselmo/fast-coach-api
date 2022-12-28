@@ -83,6 +83,7 @@ class BusCreate(BaseModel):
     route_id: int
     bus_name: str
     no_of_seats: int 
+    bus_capacity: int
     seat_arrangement: str
 
 
@@ -116,3 +117,12 @@ class BookTicketResponse(BookTicketCreate):
     passenger:UserResponse
     class Config:
         orm_mode = True
+
+class Payment(BaseModel):
+    payment_id:int 
+    amount:float
+    is_payment_succesfull: bool
+    ticket_id: int
+
+
+    

@@ -19,7 +19,7 @@ class BookTicket(Base):
     going_to = Column(String, nullable = False)
     travel_status = Column(String, nullable = False, server_default = 'upcoming')
     travel_type = Column(String, nullable = False, server_default = 'oneway')
-    is_paid = Column(Boolean, nullable = False, server_default = 'TRUE')
+    is_paid = Column(Boolean, nullable = False, server_default = 'FALSE')
     seat_no = Column(String, nullable = False)
     # travel_date = Column(TIMESTAMP(timezone = True), nullable = False)
     created_at = Column(TIMESTAMP(timezone = True), nullable = False, server_default = text('now()'))
@@ -77,6 +77,7 @@ class Bus(Base):
     bus_id = Column(Integer, primary_key = True, nullable = False)
     bus_name = Column(String, nullable = False)
     no_of_seats = Column(Integer, nullable = False)
+    bus_capacity = Column(Integer, nullable = False)
     seat_arrangement = Column(String, nullable = False)
     route_id = Column(Integer, ForeignKey('travel_route_tbl.route_id', ondelete="CASCADE"), nullable = False)
     route = relationship('TravelRoute')
@@ -88,31 +89,21 @@ class Bus(Base):
 
 
 
-
-class Depature(Base):
-    __tablename__ ="depature_tbl"
+class Payments(Base):
+    __tablename__ = "payments_tbl"
     '''
-    this is what is sent to the user displaying when a bus is leaving and the 
-    route its taking 
+    payments 
 
     '''
+    payment_id = Column(Integer, primary_key = True, nullable = False)
+    amount = Column(Float, nullable = False)
+    is_payment_succesfull = Column(Boolean, nullable = False)
+    user_id = Column(Integer, ForeignKey('users_tbl.user_id', ondelete="CASCADE"), nullable = False)
+    passenger = relationship('User')
+    ticket_id = Column(Integer, ForeignKey('book_ticket_tbl.ticket_id', ondelete="CASCADE"), nullable = False)
+    booking = relationship('BookTicket')
 
-    dep_id = Column(Integer, primary_key = True, nullable = False )
-    seats_available = Column(Integer, nullable =  False)
-        
-
-
-
-
-
-
-# class Payments(Base):
-#     __tablename__ = "payments_tbl"
-#     '''
-#     payments 
-
-#     '''
-#     pass 
+    
 
 
 

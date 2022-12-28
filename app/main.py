@@ -3,7 +3,7 @@ from . import models
 from app.database import engine
 from app.routers import users, auth, admin, bookings
 
-models.Base.metadata.create_all(bind=engine)# create tbls for us 
+# models.Base.metadata.create_all(bind=engine)# create tbls for us 
 
 
 
