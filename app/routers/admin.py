@@ -115,9 +115,11 @@ async def delete_route(route_id:int, db:session = Depends(get_db), curr_user:int
 @router.post('/buses', status_code=status.HTTP_201_CREATED, response_model=schemas.BusResponse)
 async def create_bus (bus:schemas.BusCreate,db:session = Depends(get_db), curr_user:int = Depends(oauth2.get_current_user_logged_in)):
     '''
-    create a new bus 
+    create a new bus and assign a driver 
+    the user_id represents a driver 
+    
     '''
-    new_bus = models.Bus(**bus.dict(), user_id = curr_user.user_id)
+    new_bus = models.Bus(**bus.dict())
 
     db.add(new_bus)
     db.commit()
@@ -187,3 +189,4 @@ async def delete_bus(bus_id:int, db: session = Depends(get_db), curr_user:int = 
     bus.delete(synchronize_session = False)
     db.commit()    
     return {"detail": "deleted bus sucessfully "}
+

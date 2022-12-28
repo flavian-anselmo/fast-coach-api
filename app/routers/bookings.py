@@ -12,12 +12,15 @@ get req
 '''
 
 
+from datetime import timedelta
 from typing import List
 from fastapi import APIRouter
 from sqlalchemy.orm import session
 from app.database import get_db
 from fastapi import Depends, HTTPException, status
 from app import models, schemas, oauth2
+
+
 
 
 
@@ -38,6 +41,7 @@ async def reduce_no_seats(bus_id:int, db:session):
     try:
         seat = db.query(models.Bus).filter(models.Bus.bus_id == bus_id).first()
         if seat.no_of_seats != None:
+
             # if the seats availability is not zero 
             seat.no_of_seats = seat.no_of_seats - 1
             db.commit()
@@ -49,10 +53,6 @@ async def reduce_no_seats(bus_id:int, db:session):
     
 
 
-
-
-
-    
 
 
 @router.post('/book', status_code=status.HTTP_201_CREATED)
@@ -108,4 +108,6 @@ async def get_bus_routes(leaving_from:str, going_to:str, db:session =  Depends(g
     if not bus_routes:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='routes not found')
     return bus_routes
+
+
 

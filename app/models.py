@@ -21,7 +21,7 @@ class BookTicket(Base):
     travel_type = Column(String, nullable = False, server_default = 'oneway')
     is_paid = Column(Boolean, nullable = False, server_default = 'FALSE')
     seat_no = Column(String, nullable = False)
-    # travel_date = Column(TIMESTAMP(timezone = True), nullable = False)
+    travel_date = Column(TIMESTAMP(timezone = True), nullable = True)
     created_at = Column(TIMESTAMP(timezone = True), nullable = False, server_default = text('now()'))
     passenger_id = Column(Integer, ForeignKey('users_tbl.user_id', ondelete="CASCADE"), nullable = False)
     passenger = relationship("User")
@@ -94,14 +94,18 @@ class Payments(Base):
     '''
     payments 
 
+    one to one relationship to bus tickets 
+    many to one relaationship to users 
+
     '''
     payment_id = Column(Integer, primary_key = True, nullable = False)
     amount = Column(Float, nullable = False)
     is_payment_succesfull = Column(Boolean, nullable = False)
     user_id = Column(Integer, ForeignKey('users_tbl.user_id', ondelete="CASCADE"), nullable = False)
     passenger = relationship('User')
-    ticket_id = Column(Integer, ForeignKey('book_ticket_tbl.ticket_id', ondelete="CASCADE"), nullable = False)
-    booking = relationship('BookTicket')
+    ticket_id = Column(Integer, ForeignKey('book_ticket_tbl.ticket_id', ondelete="CASCADE"), nullable = False, unique = True)
+    booking = relationship('BookTicket', uselist = False, backref = 'payaments_tbl')
+    paid_at = Column(TIMESTAMP(timezone = True), nullable = False, server_default = text('now()'))
 
     
 

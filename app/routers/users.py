@@ -43,6 +43,10 @@ async def register_user(user:schemas.UserCreate, db: session = Depends(get_db), 
 
 @router.get('/', description='get all users', response_model = List[schemas.UserResponse])
 async def get_all_users(db:session= Depends(get_db), current_user:int  = Depends(oauth2.get_current_user_logged_in), ):
+    '''
+    get all the users  registered in the system 
+
+    '''
     _user = db.query(models.User).all()
     if not _user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='no users registered')
@@ -60,29 +64,15 @@ async def get_user_by_id(user_id:int , db: session = Depends(get_db), curr_user:
     return _user    
 
 
+@router.get('/drivers', description='gets the registered drivers and the buses they drive')
+async def get_drivers():
+    '''
+    get the drivers registered in the system and the buses they drive 
 
+    '''
+    pass 
 
+    
 
-# @router.put('/', response_model=schemas.UserResponse)
-# async  def update_profile(profile_update:schemas.UserCreate, db:session =  Depends(get_db), curr_user:int = Depends(oauth2.get_current_user_logged_in)):
-#     '''
-#     update profile 
-
-#     '''
-#     update_profile = db.query(models.TravelRoute).filter(models.User.user_id == curr_user.user_id )
-
-#     profile = update_profile.first()
-
-#     if profile == None:
-#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='route not found')  
-
-#     update_profile.update(
-#         # update 
-#         profile_update.dict(),
-#         synchronize_session = False
-#     )  
-#     # commit changes 
-#     db.commit()
-#     return update_profile.first()
 
 

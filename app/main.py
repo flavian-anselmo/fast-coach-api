@@ -1,7 +1,11 @@
-from fastapi import FastAPI
+from datetime import timedelta
+from fastapi import Depends, FastAPI
 from . import models
-from app.database import engine
-from app.routers import users, auth, admin, bookings
+from app.database import engine, get_db
+from app.routers import users, auth, admin, bookings, payments
+from sqlalchemy.orm import session
+
+
 
 # models.Base.metadata.create_all(bind=engine)# create tbls for us 
 
@@ -32,8 +36,14 @@ app.include_router(users.router)
 app.include_router(auth.router)
 app.include_router(admin.router)
 app.include_router(bookings.router)
+app.include_router(payments.router)
+
+# tasks with scheduled intervals 
 
 # root 
 @app.get("/")
 def read_root():
     return {"message": "fast-coach-api"}
+
+
+
