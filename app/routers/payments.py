@@ -45,8 +45,8 @@ async def pay_for_ticket(payament:schemas.PaymentCreate, db:session = Depends(ge
         )
         db.refresh(pay)
         return pay
-    except IntegrityError:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='ticket already paid ')
+    except Exception as error:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(error))
 
 
 

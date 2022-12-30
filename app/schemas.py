@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 from pydantic import BaseModel, EmailStr
 class UserCreate(BaseModel):
     '''
@@ -11,17 +12,15 @@ class UserCreate(BaseModel):
     '''
     email:EmailStr
     password:str 
+    first_name:Optional[str]
+    last_name:Optional[str]
+    phone_number:Optional[str]
     is_passenger:bool
-    is_driver:bool
     is_admin:bool
     
 
 
 class UserResponse(BaseModel):
-    '''
-    expected response once a user is created 
-
-    '''
     user_id :int
     email: EmailStr
     is_passenger:bool
@@ -34,38 +33,23 @@ class UserResponse(BaseModel):
 
 
 class TokenResponse(BaseModel):
-    '''
-    payload returned with accessToken 
-    {
-        accessToken:'xxxxx'
-        Type:""Bearer
-    }
-    '''
     access_token:str
     type:str
     class Config:        
         orm_mode = True
     
 class TokenPayLoad(BaseModel):
-    '''
-    payload sent to get the accessToken 
-    {
-        "user_id":user_id 
-    }
-    '''
+
     user_id:int
 
-class TravelRouteCreate(BaseModel):
-    '''
-    creating a travel route for a bus 
 
-    ''' 
+
+
+class TravelRouteCreate(BaseModel):
     leaving_from: str
     going_to: str 
     price: float
     
-
-
 class TravelRouteResponse(TravelRouteCreate):
     '''
     response when getting routes posted 
@@ -77,6 +61,8 @@ class TravelRouteResponse(TravelRouteCreate):
     class Config:
         orm_mode = True
   
+
+
 
 
 class BusCreate(BaseModel):
@@ -102,6 +88,9 @@ class BusResponse(BusCreate):
         orm_mode = True
 
 
+
+
+
 class BookTicketCreate(BaseModel):
     ticket_id:int
     passenger_id:int 
@@ -119,6 +108,10 @@ class BookTicketResponse(BookTicketCreate):
     class Config:
         orm_mode = True
 
+
+
+
+
 class PaymentCreate(BaseModel):
     ticket_id: int 
     amount:float
@@ -129,5 +122,23 @@ class PaymentResponse(PaymentCreate):
     user_id:int 
 
 
+    class Config:
+        orm_mode = True
+
+
+
+
+
+
+
+class DriverCreate(BaseModel):
+    bus_id:str
+    first_name:str
+    last_name:str
+    phone_number:str
+
+
+class DriverResponse(DriverCreate):
+    bus: BusResponse
     class Config:
         orm_mode = True

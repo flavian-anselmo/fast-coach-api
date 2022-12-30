@@ -42,9 +42,11 @@ class User(Base):
 
     user_id =  Column(Integer, primary_key = True, nullable = False)
     email = Column(String , nullable = False, unique =  True )
+    first_name = Column(String, nullable = True)
+    last_name = Column(String, nullable = True)
+    phone_number = Column(String, nullable = True)
     password = Column(String, nullable = False)
     is_passenger = Column(Boolean, nullable = False, server_default = 'TRUE')
-    is_driver = Column(Boolean, nullable = False, server_default = 'False')
     is_admin = Column(Boolean, nullable = False, server_default = 'False')
     created_at =  Column (TIMESTAMP(timezone = True), nullable = False, server_default = text('now()'))
 
@@ -110,4 +112,19 @@ class Payments(Base):
     
 
 
+
+class Driver (Base):
+    '''
+    assign each driver a bus 
+
+    one to one relationship 
+
+    '''
+    __tablename__ = 'driver_tbl'
+    driver_id =  Column(Integer, nullable = False, primary_key = True)
+    first_name = Column(String, nullable = False)
+    last_name = Column(String, nullable = False)
+    phone_number = Column(String, nullable = False)
+    bus_id = Column(Integer, ForeignKey('bus_tbl.bus_id'), nullable = False, unique = True)
+    bus = relationship('Bus', uselist =  False)
 
