@@ -95,7 +95,7 @@ class Payments(Base):
     __tablename__ = "payments_tbl"
     '''
     payments 
-
+    ----------------
     one to one relationship to bus tickets 
     many to one relaationship to users 
 
@@ -115,9 +115,7 @@ class Payments(Base):
 
 class Driver (Base):
     '''
-    assign each driver a bus 
-
-    one to one relationship 
+    assign each driver a bus -> one to one relationship 
 
     '''
     __tablename__ = 'driver_tbl'
@@ -136,6 +134,7 @@ class BookedSeats(Base):
     the bus_id is unique but the list for each bus is upated once a passenger books  a seat 
     '''
     __tablename__ = 'bookedseats_tbl'
+    seats_id = Column(Integer, primary_key = True, nullable = False)
     bus_id = Column(Integer, ForeignKey('bus_tbl.bus_id'), nullable = False, unique = True)
     bus = relationship('Bus', uselist =  False)
     booked_seats = Column(ARRAY(String), nullable = True)

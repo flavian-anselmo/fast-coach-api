@@ -142,5 +142,9 @@ class DriverResponse(DriverCreate):
 
 
 
-class BookedSeats(BaseModel):
-    pass 
+class BookedSeatsCreate(BaseModel):
+    bus_id:int 
+    booked_seats:list[str]
+class BookedSeatsResponse(BookedSeatsCreate):
+    class Config:
+        orm_mode = True    
