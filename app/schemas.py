@@ -136,3 +136,11 @@ class DriverResponse(DriverCreate):
     bus: BusResponse
     class Config:
         orm_mode = True
+
+
+
+
+
+
+class BookedSeats(BaseModel):
+    pass 

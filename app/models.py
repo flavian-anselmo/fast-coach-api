@@ -1,4 +1,4 @@
-from sqlalchemy import TIMESTAMP, Boolean, Column, ForeignKey, Integer, String, Float
+from sqlalchemy import TIMESTAMP, Boolean, Column, ForeignKey, Integer, String, Float, ARRAY
 from sqlalchemy.sql.expression import text
 from app.database import Base
 from sqlalchemy.orm import relationship
@@ -128,3 +128,14 @@ class Driver (Base):
     bus_id = Column(Integer, ForeignKey('bus_tbl.bus_id'), nullable = False, unique = True)
     bus = relationship('Bus', uselist =  False)
 
+
+
+class BookedSeats(Base):
+    '''
+    track the booked seats in each bus 
+    the bus_id is unique but the list for each bus is upated once a passenger books  a seat 
+    '''
+    __tablename__ = 'bookedseats_tbl'
+    bus_id = Column(Integer, ForeignKey('bus_tbl.bus_id'), nullable = False, unique = True)
+    bus = relationship('Bus', uselist =  False)
+    booked_seats = Column(ARRAY(String), nullable = True)
