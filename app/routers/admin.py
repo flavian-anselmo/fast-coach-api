@@ -27,12 +27,12 @@ from app import models, schemas, oauth2
 router = APIRouter(
   
     prefix = '/admin',
-    tags = ['Admin (buses & routes)']
+    tags = ['Admin (Drivers, Buses & Routes)']
 )
 
 
 
-#----------------------------------------------------[ROUTE ENDPOINTS]---------------------------------------------------------------------------------------
+#----------------------------------------------------[BUS ROUTE ENDPOINTS]---------------------------------------------------------------------------------------
 
 @router.post('/routes', status_code = status.HTTP_201_CREATED, response_model=schemas.TravelRouteResponse)
 async def create_bus_route(route:schemas.TravelRouteCreate, db:session = Depends(get_db), curr_user:int = Depends(oauth2.get_current_user_logged_in)):
@@ -109,6 +109,10 @@ async def delete_route(route_id:int, db:session = Depends(get_db), curr_user:int
     bus.delete(synchronize_session = False)
     db.commit()    
     return {"detail": "deleted route sucessfully "}
+
+
+
+
 
 # -------------------------------- [BUS ENDPOINTS]------------------------------------------------------------------------------------------------------ 
 
@@ -189,4 +193,66 @@ async def delete_bus(bus_id:int, db: session = Depends(get_db), curr_user:int = 
     bus.delete(synchronize_session = False)
     db.commit()    
     return {"detail": "deleted bus sucessfully "}
+
+
+
+# ------------------------[DRIVER ENDPOINTS]-------------------------------------------------------------------------------------------------------------------------------
+@router.post('/drivers', response_model=schemas.DriverResponse)
+async def register_driver(driver:schemas.DriverCreate, db:session = Depends(get_db), curr_user:int = Depends(oauth2.get_current_user_logged_in)):
+    '''
+    assign a driver a bus 
+    '''
+    new_driver = models.Driver(**driver.dict())
+    db.add(new_driver)
+    db.commit()
+    db.refresh(new_driver)
+    return new_driver
+
+
+
+@router.get('/drivers', response_model=List[schemas.DriverResponse])
+async def get_all_drivers(db:session = Depends(get_db), curr_user:int = Depends(oauth2.get_current_user_logged_in)):
+    '''
+    get all the registered drivers together with the route they take 
+
+    '''
+    drivers  = db.query(models.Driver).all()
+
+    if not drivers:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='no bus routes available')
+    return drivers 
+
+
+@router.put('/drivers', response_model=schemas.DriverResponse)
+async def update_driver(driver_id:int, driver_update:schemas.DriverCreate, db:session = Depends(get_db), curr_user:int = Depends(oauth2.get_current_user_logged_in)):
+    '''
+    update the driver 
+
+    '''
+    update_driver = db.query(models.Driver).filter(models.Driver.driver_id == driver_id)
+
+    driver = update_driver.first()
+
+    if driver == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='driver not found')  
+          
+    update_driver.update(
+        # update 
+        driver_update.dict(),
+        synchronize_session = False 
+    )  
+    # commit changes 
+    db.commit()
+    return update_driver.first()
+
+@router.delete('/drivers/{driver_id}')
+async def delete_driver(driver_id:int, db: session = Depends(get_db), curr_user:int = Depends(oauth2.get_current_user_logged_in)):
+    '''
+    delete  a registered driver
+
+    '''
+    bus = db.query(models.Driver).filter(models.Driver.driver_id == driver_id)
+    bus.delete(synchronize_session = False)
+    db.commit()    
+    return {"detail": "deleted driver sucessfully "}
 
