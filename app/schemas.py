@@ -1,15 +1,8 @@
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, PositiveFloat
+from sqlalchemy import Enum
 class UserCreate(BaseModel):
-    '''
-    used with post req to create a user 
-    {
-        password: required 
-        email: required
-    }     
-
-    '''
     email:EmailStr
     password:str 
     first_name:Optional[str]
@@ -48,8 +41,7 @@ class TokenPayLoad(BaseModel):
 class TravelRouteCreate(BaseModel):
     leaving_from: str
     going_to: str 
-    price: float
-    
+    price: PositiveFloat
 class TravelRouteResponse(TravelRouteCreate):
     '''
     response when getting routes posted 
@@ -83,11 +75,15 @@ class BusResponse(BusCreate):
     route_id:int 
     user_id:int 
     route: TravelRouteResponse
-    user: UserResponse
     class Config:
         orm_mode = True
 
 
+
+
+class TravelStatus(str, Enum):
+    upcoming = 'Upcoming'
+    past = 'past'
 
 
 
@@ -99,10 +95,11 @@ class BookTicketCreate(BaseModel):
     going_to:str
     seat_no: str
     travel_type:str
+    travel_status: TravelStatus
 
 class BookTicketResponse(BookTicketCreate):
     is_paid:bool
-    travel_status:str
+    travel_status:TravelStatus
     bus: BusResponse
     passenger:UserResponse
     class Config:
@@ -114,14 +111,11 @@ class BookTicketResponse(BookTicketCreate):
 
 class PaymentCreate(BaseModel):
     ticket_id: int 
-    amount:float
+    amount:PositiveFloat
     is_payment_succesfull: bool
 
 class PaymentResponse(PaymentCreate):
-
     user_id:int 
-
-
     class Config:
         orm_mode = True
 
