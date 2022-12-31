@@ -30,7 +30,7 @@ router = APIRouter(
     tags = ['Book a ticket ']
 )
 
-
+# ------------[reduce number of seats]--------------------------------
 async def reduce_no_seats(bus_id:int, db:session):
     ''' 
     reduce the number of seats 
@@ -52,42 +52,39 @@ async def reduce_no_seats(bus_id:int, db:session):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='unexpected errorr')
     
 
-# ----[track seats]-------
-async def track_seats(bus_id:int, seat_no:str,db:session, booked_seat_track):
-    '''
-    track the seats 
-
-    Algorithm
-    1. check if the bus_id exists 
-        if yes: 
-            update the seats 
-        if no -> this is a new bus in the list:
-            make a post req     
-
-    '''
+# ---------------------[track seats]--------------------------------------
+async def track_seats(bus_id:int, seat_no:str,db:session):
     bus = db.query(models.BookedSeats).filter(models.BookedSeats.bus_id == bus_id).first()
     if bus:
         # update seat 
-        print('pass 1')
         bus.booked_seats.append(seat_no)
-        print('pass 2')
         db.commit()
         db.refresh(bus)
-        return {'MSG':'OK 200'}
-    # make a post
-    new_booked_seat_tracking = models.BookedSeats(**booked_seat_track.dict())
-    db.add(new_booked_seat_tracking)
-    db.commit()
-    db.refresh(new_booked_seat_tracking)
+    else:
+        await create_new_booked_seat(bus_id, seat_no, db)    
 
-    return {'detail':'seat updated'}
+
+
+
+# -------------------------[create the first booked seat]-----------------
+async def create_new_booked_seat(bus_id: int, seat_no:str, db:session):
+    try:
+        new_booked_seat = models.BookedSeats(bus_id = bus_id, booked_seats = [seat_no]) 
+        db.add(new_booked_seat)
+        db.commit()
+        db.refresh(new_booked_seat)
+    except Exception as err:
+        raise HTTPException(status_code=status.HTTP_417_EXPECTATION_FAILED, detail=str(err))   
+
+
+
 
 
        
       
 
 @router.post('/book', status_code=status.HTTP_201_CREATED)
-async def book_ticket(ticket:schemas.BookTicketCreate, booked_seat_track:schemas.BookedSeatsCreate, db:session = Depends(get_db), curr_user:int = Depends(oauth2.get_current_user_logged_in)):
+async def book_ticket(ticket:schemas.BookTicketCreate,  db:session = Depends(get_db), curr_user:int = Depends(oauth2.get_current_user_logged_in)):
     '''
     book a ticket 
 
@@ -103,11 +100,11 @@ async def book_ticket(ticket:schemas.BookTicketCreate, booked_seat_track:schemas
                 ticket.bus_id,
                 db,
             )
+            
             await track_seats(
                 ticket.bus_id,
                 ticket.seat_no,
                 db,
-                booked_seat_track = booked_seat_track
             )
             db.refresh(new_ticket)
             return {'message':'Ticket Booked Successfully'}
@@ -151,4 +148,14 @@ async def get_bus_routes(leaving_from:str, going_to:str, db:session =  Depends(g
     return bus_routes
 
 
-# ------------------------------------------------------[SETA TRACKING]---------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------[SEAT TRACKING]---------------------------------------------------------------------------------------------------------
+@router.get('/bookedseats', response_model= List[schemas.BookedSeatsResponse])
+async def get_all_booked_seats(db:session = Depends(get_db), curr_user:int = Depends(oauth2.get_current_user_logged_in)):
+    '''
+    get all booked seats 
+
+    '''
+    booked_seats = db.query(models.BookedSeats).all()
+    if booked_seats:
+        return booked_seats
+    raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail='no booked seats')
