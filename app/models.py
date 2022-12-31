@@ -2,6 +2,7 @@ from sqlalchemy import TIMESTAMP, Boolean, Column, ForeignKey, Integer, String, 
 from sqlalchemy.sql.expression import text
 from app.database import Base
 from sqlalchemy.orm import relationship
+from sqlalchemy.ext.mutable import MutableList
 
 
 
@@ -137,4 +138,4 @@ class BookedSeats(Base):
     seats_id = Column(Integer, primary_key = True, nullable = False)
     bus_id = Column(Integer, ForeignKey('bus_tbl.bus_id'), nullable = False, unique = True)
     bus = relationship('Bus', uselist =  False)
-    booked_seats = Column(ARRAY(String), nullable = True)
+    booked_seats = Column(MutableList.as_mutable( ARRAY(String)), nullable = False)

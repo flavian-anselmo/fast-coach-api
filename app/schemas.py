@@ -17,7 +17,6 @@ class UserResponse(BaseModel):
     user_id :int
     email: EmailStr
     is_passenger:bool
-    is_driver:bool
     is_admin:bool
     created_at:datetime
     class Config:
