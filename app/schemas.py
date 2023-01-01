@@ -1,15 +1,18 @@
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel, EmailStr, PositiveFloat
+from pydantic import BaseModel, EmailStr, PositiveFloat, validator
 from sqlalchemy import Enum
+
 class UserCreate(BaseModel):
     email:EmailStr
     password:str 
-    first_name:Optional[str]
-    last_name:Optional[str]
-    phone_number:Optional[str]
+    first_name:str
+    last_name:str
+    phone_number:str
     is_passenger:bool
     is_admin:bool
+    
+    
     
 
 
@@ -42,11 +45,6 @@ class TravelRouteCreate(BaseModel):
     going_to: str 
     price: PositiveFloat
 class TravelRouteResponse(TravelRouteCreate):
-    '''
-    response when getting routes posted 
-    inherits from original travel toute 
-
-    '''
     route_id:int 
 
     class Config:
@@ -81,8 +79,8 @@ class BusResponse(BusCreate):
 
 
 class TravelStatus(str, Enum):
-    upcoming = 'Upcoming'
-    past = 'past'
+    upcoming = 'Up Coming'
+    past = 'Past'
 
 
 
@@ -111,7 +109,6 @@ class BookTicketResponse(BookTicketCreate):
 class PaymentCreate(BaseModel):
     ticket_id: int 
     amount:PositiveFloat
-    is_payment_succesfull: bool
 
 class PaymentResponse(PaymentCreate):
     user_id:int 
@@ -129,6 +126,16 @@ class DriverCreate(BaseModel):
     first_name:str
     last_name:str
     phone_number:str
+
+    # @validator('phone_number')
+    # def validate_phone_number():
+    #     '''
+    #     validate that the phone number is kenyan 
+    #     +2547xxxxxxxx
+    #     the length must be 
+    #     '''
+    #     return ''
+
 
 
 class DriverResponse(DriverCreate):

@@ -22,18 +22,23 @@ async def login(user_creds: OAuth2PasswordRequestForm = Depends(), db:session = 
     this endpoint depends on OAuth2PasswordRequestForm 
 
     '''
-    user = db.query(models.User).filter(models.User.email == user_creds.username).first()
-    print(user)
-    if not user:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Invalid credentials')
-    if not utils.verify_password(user_creds.password, user.password):
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Invalid credentials')
+    try:
 
-    '''push the user_id as the payload'''
-    access_token = oauth2.create_access_token(payload = {"user_id": user.user_id})
-    # return the accesstoken 
-    login_data =  {
-        "access_token": access_token,
-        "type": "Bearer"
-    } 
-    return  login_data
+        user = db.query(models.User).filter(models.User.email == user_creds.username).first()
+        print(user)
+        if not user:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Invalid credentials')
+        if not utils.verify_password(user_creds.password, user.password):
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Invalid credentials')
+
+        '''push the user_id as the payload'''
+        access_token = oauth2.create_access_token(payload = {"user_id": user.user_id})
+        # return the accesstoken 
+        login_data =  {
+            "access_token": access_token,
+            "type": "Bearer"
+        } 
+        return  login_data
+    except Exception as error:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))
+

@@ -48,20 +48,25 @@ async def reduce_no_seats(bus_id:int, db:session):
             db.refresh(seat)
             return seat 
         return {'message':'The bus is fully booked'}    
-    except:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='unexpected errorr')
+    except Exception as error:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))
     
 
 # ---------------------[track seats]--------------------------------------
 async def track_seats(bus_id:int, seat_no:str,db:session):
-    bus = db.query(models.BookedSeats).filter(models.BookedSeats.bus_id == bus_id).first()
-    if bus:
-        # update seat 
-        bus.booked_seats.append(seat_no)
-        db.commit()
-        db.refresh(bus)
-    else:
-        await create_new_booked_seat(bus_id, seat_no, db)    
+    try:
+        bus = db.query(models.BookedSeats).filter(models.BookedSeats.bus_id == bus_id).first()
+        if bus:
+            # update seat 
+            bus.booked_seats.append(seat_no)
+            db.commit()
+            db.refresh(bus)
+        else:
+            await create_new_booked_seat(bus_id, seat_no, db)   
+    except Exception as error:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))
+
+                 
 
 
 
@@ -82,7 +87,7 @@ async def create_new_booked_seat(bus_id: int, seat_no:str, db:session):
 
        
       
-
+# ------------------------------------[book a seat]----------------------------------
 @router.post('/book', status_code=status.HTTP_201_CREATED)
 async def book_ticket(ticket:schemas.BookTicketCreate,  db:session = Depends(get_db), curr_user:int = Depends(oauth2.get_current_user_logged_in)):
     '''
@@ -110,8 +115,8 @@ async def book_ticket(ticket:schemas.BookTicketCreate,  db:session = Depends(get
             return {'message':'Ticket Booked Successfully'}
         else:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='The bus is fully booked')    
-    except Exception as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    except Exception as error:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))
 
 
 
@@ -125,10 +130,15 @@ async def get_ticket_booked(db:session = Depends(get_db), curr_user:int = Depend
     only the login user will be able to get a ticket 
 
     '''
-    ticket = db.query(models.BookTicket).filter(models.BookTicket.passenger_id == curr_user.user_id).all()
-    if not ticket:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='ticket not found')
-    return ticket    
+    try:
+
+        ticket = db.query(models.BookTicket).filter(models.BookTicket.passenger_id == curr_user.user_id).all()
+        if not ticket:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='ticket not found')
+        return ticket    
+    except Exception as error:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))
+    
     
 
     
@@ -141,11 +151,15 @@ async def get_bus_routes(leaving_from:str, going_to:str, db:session =  Depends(g
     - going_to 
 
     '''
-    bus_routes_join = db.query(models.Bus).join(models.TravelRoute, models.Bus.route_id == models.TravelRoute.route_id, isouter = True)
-    bus_routes =  bus_routes_join.filter(models.TravelRoute.going_to.__eq__(going_to) and models.TravelRoute.leaving_from.__eq__(leaving_from)).all()
-    if not bus_routes:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='routes not found')
-    return bus_routes
+    try:
+
+        bus_routes_join = db.query(models.Bus).join(models.TravelRoute, models.Bus.route_id == models.TravelRoute.route_id, isouter = True)
+        bus_routes =  bus_routes_join.filter(models.TravelRoute.going_to.__eq__(going_to) and models.TravelRoute.leaving_from.__eq__(leaving_from)).all()
+        if not bus_routes:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='routes not found')
+        return bus_routes
+    except Exception as error:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))
 
 
 # ------------------------------------------------------[SEAT TRACKING]---------------------------------------------------------------------------------------------------------
@@ -155,7 +169,13 @@ async def get_all_booked_seats(db:session = Depends(get_db), curr_user:int = Dep
     get all booked seats 
 
     '''
-    booked_seats = db.query(models.BookedSeats).all()
-    if booked_seats:
-        return booked_seats
-    raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail='no booked seats')
+    try:
+
+        booked_seats = db.query(models.BookedSeats).all()
+        if booked_seats:
+            return booked_seats
+        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail='no booked seats')
+    except Exception as error:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))
+    
+ 

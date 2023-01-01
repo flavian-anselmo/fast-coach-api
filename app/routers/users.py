@@ -47,30 +47,32 @@ async def get_all_users(db:session= Depends(get_db), current_user:int  = Depends
     get all the users  registered in the system 
 
     '''
-    _user = db.query(models.User).all()
-    if not _user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='no users registered')
-    return _user
+    try:
+
+        _user = db.query(models.User).all()
+        if not _user:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='no users registered')
+        return _user
+    except Exception as error:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))
+    
 
 
 
 
 @router.get('/{user_id}', status_code = status.HTTP_200_OK, response_model = schemas.UserResponse, description = 'get one user or curret user')
 async def get_user_by_id(user_id:int , db: session = Depends(get_db), curr_user:int = Depends(oauth2.get_current_user_logged_in)):
+    try:
+        _user = db.query(models.User).filter(models.User.user_id == user_id).first()
+        if not _user:
+            raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail = 'user not found')
+        return _user    
+    except Exception as error:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))
 
-    _user = db.query(models.User).filter(models.User.user_id == user_id).first()
-    if not _user:
-        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail = 'user not found')
-    return _user    
 
 
-@router.get('/drivers', description='gets the registered drivers and the buses they drive')
-async def get_drivers():
-    '''
-    get the drivers registered in the system and the buses they drive 
 
-    '''
-    pass 
 
     
 

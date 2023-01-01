@@ -41,11 +41,15 @@ async def create_bus_route(route:schemas.TravelRouteCreate, db:session = Depends
     admin will be adding bus routes 
 
     '''
-    new_route = models.TravelRoute(**route.dict(), user_id = curr_user.user_id)
-    db.add(new_route)
-    db.commit()
-    db.refresh(new_route)
-    return new_route
+    try:
+        new_route = models.TravelRoute(**route.dict(), user_id = curr_user.user_id)
+        db.add(new_route)
+        db.commit()
+        db.refresh(new_route)
+        return new_route
+
+    except Exception as error:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))    
 
 
 
@@ -56,10 +60,13 @@ async def get_all_travel_routes(db:session = Depends(get_db), curr_user:int = De
     get all the travel routes 
 
     '''
-    routes = db.query(models.TravelRoute).all()
-    if not routes:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='no bus routes available')
-    return routes    
+    try:
+        routes = db.query(models.TravelRoute).all()
+        if not routes:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='no bus routes available')
+        return routes 
+    except Exception as error:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))    
 
 
 
@@ -69,11 +76,15 @@ async def get_route_by_id(route_id:int, curr_user:int = Depends(oauth2.get_curre
     '''
     get one route with id 
     '''
-    route = db.query(models.TravelRoute).filter(models.TravelRoute.route_id == route_id ).first()
+    try:
+        route = db.query(models.TravelRoute).filter(models.TravelRoute.route_id == route_id ).first()
 
-    if not route:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='no bus route available')
-    return route    
+        if not route:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='no bus route available')
+        return route   
+    except Exception as error:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))    
+     
 
 
 @router.put('/route/{route_id}', response_model=schemas.TravelRouteResponse)
@@ -82,21 +93,25 @@ async def update_route(route_id:int, route_update:schemas.TravelRouteCreate, db:
     update route 
 
     '''
-    update_route = db.query(models.TravelRoute).filter(models.TravelRoute.route_id == route_id)
+    try:
+        update_route = db.query(models.TravelRoute).filter(models.TravelRoute.route_id == route_id)
 
-    route = update_route.first()
+        route = update_route.first()
 
-    if route == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='route not found')  
+        if route == None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='route not found')  
 
-    update_route.update(
-        # update 
-        route_update.dict(),
-        synchronize_session = False
-    )  
-    # commit changes 
-    db.commit()
-    return update_route.first()
+        update_route.update(
+            # update 
+            route_update.dict(),
+            synchronize_session = False
+        )  
+        # commit changes 
+        db.commit()
+        return update_route.first()
+    except Exception as error:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))    
+    
 
 
 @router.delete('/routes/{route_id}')
@@ -105,10 +120,14 @@ async def delete_route(route_id:int, db:session = Depends(get_db), curr_user:int
     delete a travel route 
 
     '''
-    bus = db.query(models.TravelRoute).filter(models.TravelRoute.route_id == route_id)
-    bus.delete(synchronize_session = False)
-    db.commit()    
-    return {"detail": "deleted route sucessfully "}
+    try:
+        bus = db.query(models.TravelRoute).filter(models.TravelRoute.route_id == route_id)
+        bus.delete(synchronize_session = False)
+        db.commit()    
+        return {"detail": "deleted route sucessfully "}
+    except Exception as error:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))    
+
 
 
 
@@ -123,12 +142,17 @@ async def create_bus (bus:schemas.BusCreate,db:session = Depends(get_db), curr_u
     the user_id represents a driver 
     
     '''
-    new_bus = models.Bus(**bus.dict())
+    try:
 
-    db.add(new_bus)
-    db.commit()
-    db.refresh(new_bus)
-    return new_bus
+        new_bus = models.Bus(**bus.dict())
+
+        db.add(new_bus)
+        db.commit()
+        db.refresh(new_bus)
+        return new_bus
+    except Exception as error:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))    
+    
 
 
 
@@ -138,11 +162,15 @@ async def get_all_buses(db:session = Depends(get_db), curr_user:int = Depends(oa
     get all the registered buses together with the route they take 
 
     '''
-    buses  = db.query(models.Bus).all()
+    try:
+        buses  = db.query(models.Bus).all()
 
-    if not buses:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='no bus routes available')
-    return buses   
+        if not buses:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='no bus routes available')
+        return buses   
+    except Exception as error:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))    
+    
 
 
 
@@ -152,11 +180,15 @@ async def get_bus_by_id(bus_id:int, curr_user:int = Depends(oauth2.get_current_u
     get one bus with routes 
 
     '''
-    bus = db.query(models.Bus).filter(models.Bus.bus_id == bus_id ).first()
+    try:
+        bus = db.query(models.Bus).filter(models.Bus.bus_id == bus_id ).first()
 
-    if not bus:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='no bus route available')
-    return bus  
+        if not bus:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='no bus route available')
+        return bus  
+    except Exception as error:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))    
+    
 
 @router.put('/buses', response_model=schemas.BusResponse)
 async def update_bus(bus_id:int, bus_update:schemas.BusCreate, db:session = Depends(get_db), curr_user:int = Depends(oauth2.get_current_user_logged_in)):
@@ -164,21 +196,25 @@ async def update_bus(bus_id:int, bus_update:schemas.BusCreate, db:session = Depe
     update the buses 
 
     '''
-    update_bus = db.query(models.Bus).filter(models.Bus.bus_id == bus_id)
+    try:
+        update_bus = db.query(models.Bus).filter(models.Bus.bus_id == bus_id)
 
-    bus = update_bus.first()
+        bus = update_bus.first()
 
-    if bus== None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='bus not found')  
-          
-    update_bus.update(
-        # update 
-        bus_update.dict(),
-        synchronize_session = False 
-    )  
-    # commit changes 
-    db.commit()
-    return update_bus.first()
+        if bus== None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='bus not found')  
+            
+        update_bus.update(
+            # update 
+            bus_update.dict(),
+            synchronize_session = False 
+        )  
+        # commit changes 
+        db.commit()
+        return update_bus.first()
+    except Exception as error:
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))    
+    
 
 
 
@@ -189,10 +225,14 @@ async def delete_bus(bus_id:int, db: session = Depends(get_db), curr_user:int = 
     delete  a registered bus 
 
     '''
-    bus = db.query(models.Bus).filter(models.Bus.bus_id == bus_id)
-    bus.delete(synchronize_session = False)
-    db.commit()    
-    return {"detail": "deleted bus sucessfully "}
+    try:
+        bus = db.query(models.Bus).filter(models.Bus.bus_id == bus_id)
+        bus.delete(synchronize_session = False)
+        db.commit()    
+        return {"detail": "deleted bus sucessfully "}
+    except Exception as error:
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))    
+    
 
 
 
@@ -202,11 +242,16 @@ async def register_driver(driver:schemas.DriverCreate, db:session = Depends(get_
     '''
     assign a driver a bus 
     '''
-    new_driver = models.Driver(**driver.dict())
-    db.add(new_driver)
-    db.commit()
-    db.refresh(new_driver)
-    return new_driver
+    try:
+
+        new_driver = models.Driver(**driver.dict())
+        db.add(new_driver)
+        db.commit()
+        db.refresh(new_driver)
+        return new_driver
+    except Exception as error:
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))    
+    
 
 
 
@@ -216,11 +261,16 @@ async def get_all_drivers(db:session = Depends(get_db), curr_user:int = Depends(
     get all the registered drivers together with the route they take 
 
     '''
-    drivers  = db.query(models.Driver).all()
+    try:
 
-    if not drivers:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='no bus routes available')
-    return drivers 
+        drivers  = db.query(models.Driver).all()
+
+        if not drivers:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='no bus routes available')
+        return drivers 
+    except Exception as error:
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))    
+    
 
 
 @router.put('/drivers', response_model=schemas.DriverResponse)
@@ -229,21 +279,27 @@ async def update_driver(driver_id:int, driver_update:schemas.DriverCreate, db:se
     update the driver 
 
     '''
-    update_driver = db.query(models.Driver).filter(models.Driver.driver_id == driver_id)
+    try:
 
-    driver = update_driver.first()
+        update_driver = db.query(models.Driver).filter(models.Driver.driver_id == driver_id)
 
-    if driver == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='driver not found')  
-          
-    update_driver.update(
-        # update 
-        driver_update.dict(),
-        synchronize_session = False 
-    )  
-    # commit changes 
-    db.commit()
-    return update_driver.first()
+        driver = update_driver.first()
+
+        if driver == None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='driver not found')  
+            
+        update_driver.update(
+            # update 
+            driver_update.dict(),
+            synchronize_session = False 
+        )  
+        # commit changes 
+        db.commit()
+        return update_driver.first()
+    except Exception as error:
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))    
+
+        
 
 @router.delete('/drivers/{driver_id}')
 async def delete_driver(driver_id:int, db: session = Depends(get_db), curr_user:int = Depends(oauth2.get_current_user_logged_in)):
@@ -251,8 +307,11 @@ async def delete_driver(driver_id:int, db: session = Depends(get_db), curr_user:
     delete  a registered driver
 
     '''
-    bus = db.query(models.Driver).filter(models.Driver.driver_id == driver_id)
-    bus.delete(synchronize_session = False)
-    db.commit()    
-    return {"detail": "deleted driver sucessfully "}
+    try:
 
+        bus = db.query(models.Driver).filter(models.Driver.driver_id == driver_id)
+        bus.delete(synchronize_session = False)
+        db.commit()    
+        return {"detail": "deleted driver sucessfully "}
+    except Exception as error:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))    

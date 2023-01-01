@@ -103,7 +103,7 @@ class Payments(Base):
     '''
     payment_id = Column(Integer, primary_key = True, nullable = False)
     amount = Column(Float, nullable = False)
-    is_payment_succesfull = Column(Boolean, nullable = False)
+    is_payment_succesfull = Column(Boolean, nullable = False,server_default = 'FALSE')
     user_id = Column(Integer, ForeignKey('users_tbl.user_id', ondelete="CASCADE"), nullable = False)
     passenger = relationship('User')
     ticket_id = Column(Integer, ForeignKey('book_ticket_tbl.ticket_id', ondelete="CASCADE"), nullable = False, unique = True)
@@ -137,5 +137,5 @@ class BookedSeats(Base):
     __tablename__ = 'bookedseats_tbl'
     seats_id = Column(Integer, primary_key = True, nullable = False)
     bus_id = Column(Integer, ForeignKey('bus_tbl.bus_id'), nullable = False, unique = True)
-    bus = relationship('Bus', uselist =  False)
+    bus = relationship('Bus', uselist =  False, backref = 'bookedseats_tbl')
     booked_seats = Column(MutableList.as_mutable( ARRAY(String)), nullable = False)

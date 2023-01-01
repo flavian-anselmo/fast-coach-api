@@ -20,6 +20,7 @@ parameters{
 '''
 
 import africastalking
+from fastapi import HTTPException, status
 
 class PaymentService:
     def __init__(self) -> None:
@@ -48,14 +49,25 @@ class PaymentService:
 
 class SMS:
     def __init__(self) -> None:
-        pass
-    def send_sms(self):
+        self.username = 'sandbox'
+        self.api_key = '5385dfb553bd3ad9d181a3b87f04f5ee307ef84a776f294eeef34609b900a658'
+        africastalking.initialize(username = self.username, api_key = self.api_key)
+        self.sms = africastalking.SMS
+    async def send_sms(self, recipient:list[str], msg:str):
         '''
         send a text after a booking is done successfully and also when the travel date approaches 
         
         '''
-        pass 
+        recipients = recipient
+        message = msg
+        sender = "1795"
+        try:
+            response = self.sms.send(message, recipients, sender)
+            return response
+        except Exception as e:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
 
 if __name__ == '__main__':
     PaymentService().checkout()
-
+    # SMS().send_sms()

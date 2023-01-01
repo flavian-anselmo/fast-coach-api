@@ -5,6 +5,7 @@ from app.database import get_db
 from fastapi import Depends, HTTPException, status
 from app import models, schemas, oauth2
 from sqlalchemy.exc import IntegrityError
+from app.africas_talking import SMS
 router = APIRouter(
   
     prefix = '/payments',
@@ -24,15 +25,24 @@ async def change_paid_status(db, ticket_id:int):
         paid_status.is_paid = True
         db.commit()
         db.refresh(paid_status)
+        if paid_status.is_paid:
+            await notify_passenger_via_sms()
         return paid_status
 
+async def notify_passenger_via_sms():
+    '''
+    after the user has paid notify them via sm 
 
+    '''
+    await SMS().send_sms(recipient=['+254798071510'], msg= 'Hello thanks for booking with fastcoach!')
+    
+    
     
 
 @router.post('/stkpush', response_model=schemas.PaymentResponse)
 async def pay_for_ticket(payament:schemas.PaymentCreate, db:session = Depends(get_db), curr_user:int = Depends(oauth2.get_current_user_logged_in)):
     '''
-    will make payment to daraja api 
+    initiate payment with africas talking stkpush  
 
     '''
     try:
