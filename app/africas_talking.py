@@ -29,15 +29,15 @@ class PaymentService:
         africastalking.initialize(username = self.username, api_key = self.api_key)
         self.payment = africastalking.Payment
 
-    def checkout (self):
+    def checkout (self, productName:str, phoneNumber:str, currencyCode:str, amount:float):
         '''
         pay for the product 
 
         '''
-        productName:str = 'Fast.Coach.API'
-        phoneNumber:str = '+254798071510'
-        currencyCode:str = 'KES'
-        amount = 10.50
+        # productName:str = 'Fast.Coach.API'
+        # phoneNumber:str = '+254798071510'
+        # currencyCode:str = 'KES'
+        # amount = 10.50
         metadata = {"agentId" : "654", "productId" : "321"}
 
         try:

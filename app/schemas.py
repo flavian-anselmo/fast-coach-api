@@ -154,3 +154,7 @@ class BookedSeatsCreate(BaseModel):
 class BookedSeatsResponse(BookedSeatsCreate):
     class Config:
         orm_mode = True    
+
+
+
+    
