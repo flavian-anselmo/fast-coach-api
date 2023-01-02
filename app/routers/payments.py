@@ -25,7 +25,7 @@ async def change_paid_status(db, ticket_id:int, curr_user_id:int):
     '''
     - change the paid status in booking table to paid = True
     - This methos is initiated only when the payment process is succefull 
-
+    
     '''
     try:
         paid_status = db.query(models.BookTicket).filter(models.BookTicket.ticket_id == ticket_id).first()
@@ -111,8 +111,7 @@ async def pay_for_ticket(payament:schemas.PaymentCreate, db:session = Depends(ge
     '''
     try:
         pay = models.Payments( **payament.dict(), user_id = curr_user.user_id)
-        db.add(pay)
-        db.commit()
+     
 
         ''' initiate payment '''
         await payment_process_via_africans_talking(
@@ -121,8 +120,13 @@ async def pay_for_ticket(payament:schemas.PaymentCreate, db:session = Depends(ge
             payament.ticket_id,
             payament.amount
         )
-        db.refresh(pay)
-        return pay
+        try:
+            db.add(pay)
+            db.commit()
+            db.refresh(pay)
+            return pay
+        except Exception as error:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(error))
     except Exception as error:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(error))
 

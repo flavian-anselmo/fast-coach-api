@@ -8,6 +8,11 @@ class Settings(BaseSettings):
     database_username: str 
     algorithm: str 
     secret_key:str
+
+    # africas talking 
+    africas_talking_api_key:str 
+    africas_talking_env:str
+    sender_code:str
     
     
 

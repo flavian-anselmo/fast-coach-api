@@ -21,11 +21,12 @@ parameters{
 
 import africastalking
 from fastapi import HTTPException, status
+from app.config import settings
 
 class PaymentService:
     def __init__(self) -> None:
-        self.username = 'sandbox'
-        self.api_key = '5385dfb553bd3ad9d181a3b87f04f5ee307ef84a776f294eeef34609b900a658'
+        self.username = settings.africas_talking_env
+        self.api_key = settings.africas_talking_api_key
         africastalking.initialize(username = self.username, api_key = self.api_key)
         self.payment = africastalking.Payment
 
@@ -42,15 +43,15 @@ class PaymentService:
 
         try:
             res = self.payment.mobile_checkout(productName, phoneNumber, currencyCode, amount, metadata)
-            print (res)
+            return res
         except Exception as e:
             print ("Received error response:%s" %str(e))
 
 
 class SMS:
     def __init__(self) -> None:
-        self.username = 'sandbox'
-        self.api_key = '5385dfb553bd3ad9d181a3b87f04f5ee307ef84a776f294eeef34609b900a658'
+        self.username = settings.africas_talking_env
+        self.api_key = settings.africas_talking_api_key
         africastalking.initialize(username = self.username, api_key = self.api_key)
         self.sms = africastalking.SMS
     async def send_sms(self, recipient:list[str], msg:str):
@@ -60,7 +61,7 @@ class SMS:
         '''
         # recipients = ['+254798071510']
         # message = 'hello'
-        sender = "1795"
+        sender = settings.sender_code
         try:
             response =  self.sms.send(msg, recipient, sender)
             return response
