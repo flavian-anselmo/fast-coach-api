@@ -44,8 +44,8 @@ class PaymentService:
         try:
             res = self.payment.mobile_checkout(productName, phoneNumber, currencyCode, amount, metadata)
             return res
-        except Exception as e:
-            print ("Received error response:%s" %str(e))
+        except Exception as error:
+            raise HTTPException(status_code = status.HTTP_417_EXPECTATION_FAILED, detail=str(error))
 
 
 class SMS:
@@ -65,8 +65,8 @@ class SMS:
         try:
             response =  self.sms.send(msg, recipient, sender)
             return response
-        except Exception as e:
-            print ("Received error response:%s" %str(e))
+        except Exception as error:
+            raise HTTPException(status_code = status.HTTP_417_EXPECTATION_FAILED, detail=str(error))
 
 
 def pay():
