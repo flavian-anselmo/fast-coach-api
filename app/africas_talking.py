@@ -56,7 +56,7 @@ class SMS:
         self.sms = africastalking.SMS
     async def send_sms(self, recipient:list[str], msg:str):
         '''
-        send a text after a booking is done successfully and also when the travel date approaches 
+        - send a text after a booking is done successfully and also when the travel date approaches 
         
         '''
         # recipients = ['+254798071510']
