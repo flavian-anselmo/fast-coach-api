@@ -23,8 +23,8 @@ router = APIRouter(
 
 async def change_paid_status(db, ticket_id:int, curr_user_id:int):
     '''
-    change the paid status in booking table to paid = True
-    This methos is initiated only when the payment process is succefull 
+    - change the paid status in booking table to paid = True
+    - This methos is initiated only when the payment process is succefull 
 
     '''
     try:
@@ -45,10 +45,9 @@ async def change_paid_status(db, ticket_id:int, curr_user_id:int):
 
 async def notify_passenger_via_sms(db, curr_user_id:int):
     '''
-    after the user has paid notify them via sm 
-    Notify them if the payment was succesfull or not 
-
-    if no -> then retyr the process after 5 minutes as a background task 
+    - after the user has paid notify them via sm 
+    - Notify them if the payment was succesfull or not 
+    - if no -> then retyr the process after 5 minutes as a background task 
 
     '''
 
@@ -72,35 +71,30 @@ async def notify_passenger_via_sms(db, curr_user_id:int):
 
 async def payment_process_via_africans_talking(db, curr_user_id:int, ticket_id:int, amount:float):
     '''
-    actual payment process initation 
-    (stkpush via africas_talking api)
+    - actual payment process initation 
+    - (stkpush via africas_talking api)
 
     '''
     try:
         user = db.query(models.User).filter(models.User.user_id == curr_user_id).first()
         if user:
-            print('payment:part')
-            payment = await PaymentService().checkout(
+            await PaymentService().checkout(
                 productName = 'Fast.Coach.API',
                 phoneNumber = user.phone_number,
                 currencyCode = 'KES',
                 amount = amount
             )
-            if payment:
-                print('notification:part')
-                notification = await notify_passenger_via_sms(
-                    db,
-                    curr_user_id,
-                )
-                if notification:
-                    print('paid_status:part')
-                    await change_paid_status(
-                        db,
-                        ticket_id,
-                        curr_user_id
-                    )
+            await notify_passenger_via_sms(
+                db,
+                curr_user_id,
+            )
+            await change_paid_status(
+                db,
+                ticket_id,
+                curr_user_id
+            )
     except Exception as error:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(error))
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(error))
 
 
 
@@ -111,8 +105,8 @@ async def payment_process_via_africans_talking(db, curr_user_id:int, ticket_id:i
 @router.post('/stkpush', response_model=schemas.PaymentResponse)
 async def pay_for_ticket(payament:schemas.PaymentCreate, db:session = Depends(get_db), curr_user = Depends(oauth2.get_current_user_logged_in)):
     '''
-    initiate payment with africas talking stkpush  
-    After payments are successfull a message is sent to the passenger notifying them of the booking 
+    - initiate payment with africas talking stkpush  
+    - After payments are successfull a message is sent to the passenger notifying them of the booking 
 
     '''
     try:

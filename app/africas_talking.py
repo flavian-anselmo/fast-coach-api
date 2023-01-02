@@ -29,7 +29,7 @@ class PaymentService:
         africastalking.initialize(username = self.username, api_key = self.api_key)
         self.payment = africastalking.Payment
 
-    def checkout (self, productName:str, phoneNumber:str, currencyCode:str, amount:float):
+    async def checkout (self, productName:str, phoneNumber:str, currencyCode:str, amount:float):
         '''
         pay for the product 
 
@@ -58,16 +58,29 @@ class SMS:
         send a text after a booking is done successfully and also when the travel date approaches 
         
         '''
-        recipients = recipient
-        message = msg
+        # recipients = ['+254798071510']
+        # message = 'hello'
         sender = "1795"
         try:
-            response = self.sms.send(message, recipients, sender)
+            response =  self.sms.send(msg, recipient, sender)
             return response
         except Exception as e:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+            print ("Received error response:%s" %str(e))
 
 
-if __name__ == '__main__':
-    PaymentService().checkout()
-    # SMS().send_sms()
+def pay():
+    PaymentService().checkout(
+        'Fast.Coach.API',
+        '+254798071510',
+        'KES',
+        10.50
+    )
+
+    SMS().send_sms(
+        recipient = ['+254798071510'],
+        msg = 'hello world',
+    )
+
+
+
+# pay()
