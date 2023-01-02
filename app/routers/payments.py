@@ -21,7 +21,7 @@ router = APIRouter(
 
 
 
-async def change_paid_status(db, ticket_id:int, curr_user_id:int):
+async def change_paid_status(db, ticket_id:int):
     '''
     - change the paid status in booking table to paid = True
     - This methos is initiated only when the payment process is succefull 
@@ -91,7 +91,6 @@ async def payment_process_via_africans_talking(db, curr_user_id:int, ticket_id:i
             await change_paid_status(
                 db,
                 ticket_id,
-                curr_user_id
             )
     except Exception as error:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(error))

@@ -18,14 +18,10 @@ async def login(user_creds: OAuth2PasswordRequestForm = Depends(), db:session = 
     '''
     compare the emails too check whether they match 
     if yes we have a user .. if no we have invalid creds 
-
-    this endpoint depends on OAuth2PasswordRequestForm 
-
     '''
     try:
 
         user = db.query(models.User).filter(models.User.email == user_creds.username).first()
-        print(user)
         if not user:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Invalid credentials')
         if not utils.verify_password(user_creds.password, user.password):
