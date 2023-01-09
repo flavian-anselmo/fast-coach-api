@@ -4,6 +4,7 @@ from . import models
 from app.database import engine, get_db
 from app.routers import users, auth, admin, bookings, payments
 from sqlalchemy.orm import session
+from fastapi.middleware.cors import CORSMiddleware
 
 
 
@@ -26,6 +27,19 @@ app = FastAPI(
         "name": "Apache 2.0",
         "url": "https://www.apache.org/licenses/LICENSE-2.0.html",
     },
+)
+
+origins = [
+    '*'
+]
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
