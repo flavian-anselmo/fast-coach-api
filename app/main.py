@@ -15,7 +15,7 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI(
 
     title= "fast-coach-api",
-    description=" description",
+    description="Bus Ticketing System API ",
     version="0.0.1",
     terms_of_service="http://example.com/terms/",
     contact={
@@ -57,7 +57,7 @@ app.include_router(payments.router)
 # root 
 @app.get("/")
 def read_root():
-    return {"message": "fast-coach-api"}
+    return {"message": "Fast.Coach.API"}
 
 
 

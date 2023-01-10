@@ -84,11 +84,15 @@ class TravelStatus(str, Enum):
 
 
 
+
+
+
 class BookTicketCreate(BaseModel):
     ticket_id:int
     passenger_id:int 
     bus_id: int  
     leaving_from: str
+    travel_date:datetime
     going_to:str
     seat_no: str
     travel_type:str
@@ -156,5 +160,12 @@ class BookedSeatsResponse(BookedSeatsCreate):
         orm_mode = True    
 
 
+class DepatureCreate(BaseModel):
+    bus_id:int 
+    depature_time:datetime    
 
-    
+class DepatureResponse(DepatureCreate):
+    bus = BusResponse
+    class Config:
+        orm_mode = True
+

@@ -315,3 +315,9 @@ async def delete_driver(driver_id:int, db: session = Depends(get_db), curr_user:
         return {"detail": "deleted driver sucessfully "}
     except Exception as error:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))    
+
+
+
+
+# -------------------------------[Depature Endpoints ]---------------------------------------------------
+
