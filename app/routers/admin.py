@@ -321,3 +321,68 @@ async def delete_driver(driver_id:int, db: session = Depends(get_db), curr_user:
 
 # -------------------------------[Depature Endpoints ]---------------------------------------------------
 
+@router.post('/depature', status_code=status.HTTP_201_CREATED, response_model=schemas.DepatureResponse)
+async def create_depature (depature:schemas.DepatureCreate, db:session = Depends(get_db), curr_user:int = Depends(oauth2.get_current_user_logged_in)):
+    '''
+    Admin will be able to add a bus that is ready for depature for that day  
+    
+    '''
+    try:
+
+        new_depature = models.Bus(**depature.dict())
+        db.add(new_depature)
+        db.commit()
+        db.refresh(new_depature)
+        return new_depature
+
+    except Exception as error:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))    
+
+
+
+
+
+@router.put('/depature', response_model=schemas.DepatureResponse)
+async def update_depature(dep_id:int, depature_update:schemas.DepatureCreate, db:session = Depends(get_db), curr_user:int = Depends(oauth2.get_current_user_logged_in)):
+    '''
+    update a depature 
+
+    '''
+    try:
+
+        update_depature = db.query(models.Depature).filter(models.Depature.dep_id == dep_id)
+
+        depature = update_depature.first()
+
+        if depature == None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='driver not found')  
+            
+        update_depature.update(
+            # update 
+            depature_update.dict(),
+            synchronize_session = False 
+        )  
+        # commit changes 
+        db.commit()
+        return update_depature.first()
+    except Exception as error:
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))   
+
+
+
+
+@router.delete('/depature/{dep_id}')
+async def delete_driver(dep_id:int, db: session = Depends(get_db), curr_user:int = Depends(oauth2.get_current_user_logged_in)):
+    '''
+    delete  a depature
+
+    '''
+    try:
+
+        depature = db.query(models.Depature).filter(models.Depature.dep_id == dep_id)
+        depature.delete(synchronize_session = False)
+        db.commit()    
+        return {"detail": "depature deleted sucessfully "}
+    except Exception as error:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))    
+

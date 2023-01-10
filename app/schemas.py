@@ -64,10 +64,6 @@ class BusCreate(BaseModel):
 
 
 class BusResponse(BusCreate):
-    '''
-    travel route of the specific bus 
-    
-    '''
     bus_id:int 
     route_id:int 
     user_id:int 
@@ -158,6 +154,10 @@ class BookedSeatsCreate(BaseModel):
 class BookedSeatsResponse(BookedSeatsCreate):
     class Config:
         orm_mode = True    
+
+
+
+
 
 
 class DepatureCreate(BaseModel):

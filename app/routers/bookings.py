@@ -179,3 +179,19 @@ async def get_all_booked_seats(db:session = Depends(get_db), curr_user:int = Dep
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))
     
  
+# ----------------------------------------------[Depature]-------------------------------------------------------------------------------------
+@router.get('/depature', response_model= List[schemas.DepatureResponse])
+async def get_all_depatures(db:session = Depends(get_db), curr_user:int = Depends(oauth2.get_current_user_logged_in)):
+    '''
+    get all booked seats 
+
+    '''
+    try:
+
+        depature = db.query(models.Depature).all()
+        if depature:
+            return depature
+        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail='Sorry, we do not have any buses for your selection at the momen')
+    except Exception as error:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))
+    
