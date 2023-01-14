@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     database_name:str 
     database_username: str 
     database_port: str
+    #JWT
     algorithm: str 
     secret_key:str
 
