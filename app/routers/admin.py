@@ -32,7 +32,7 @@ router = APIRouter(
 
 
 
-#----------------------------------------------------[BUS ROUTE ENDPOINTS]---------------------------------------------------------------------------------------
+#----------------------------------------------------[BUS ROUTE ENDPOINTS]---------------------------------------------------------------
 
 @router.post('/routes', status_code = status.HTTP_201_CREATED, response_model=schemas.TravelRouteResponse)
 async def create_bus_route(route:schemas.TravelRouteCreate, db:session = Depends(get_db), curr_user:int = Depends(oauth2.get_current_user_logged_in)):
@@ -87,30 +87,27 @@ async def get_route_by_id(route_id:int, curr_user:int = Depends(oauth2.get_curre
      
 
 
-@router.put('/route/{route_id}', response_model=schemas.TravelRouteResponse)
+@router.put('/route/{route_id}', response_model = schemas.TravelRouteResponse)
 async def update_route(route_id:int, route_update:schemas.TravelRouteCreate, db:session = Depends(get_db), curr_user:int = Depends(oauth2.get_current_user_logged_in)):
     '''
     update route 
 
     '''
-    try:
-        update_route = db.query(models.TravelRoute).filter(models.TravelRoute.route_id == route_id)
+    
+    update_route_query = db.query(models.TravelRoute).filter(models.TravelRoute.route_id == route_id)
 
-        route = update_route.first()
+    route = update_route_query.first()
 
-        if route == None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='route not found')  
+    if route == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='route not found')  
 
-        update_route.update(
-            # update 
-            route_update.dict(),
-            synchronize_session = False
-        )  
-        # commit changes 
-        db.commit()
-        return update_route.first()
-    except Exception as error:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))    
+    update_route_query.update(
+        route_update.dict(),
+        synchronize_session = False
+    )  
+    db.commit()
+    return update_route_query.first()
+    
     
 
 
@@ -329,7 +326,7 @@ async def create_depature (depature:schemas.DepatureCreate, db:session = Depends
     '''
     try:
 
-        new_depature = models.Bus(**depature.dict())
+        new_depature = models.Depature(**depature.dict())
         db.add(new_depature)
         db.commit()
         db.refresh(new_depature)

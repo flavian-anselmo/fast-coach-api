@@ -75,7 +75,7 @@ class BusResponse(BusCreate):
 
 
 class TravelStatus(str, Enum):
-    upcoming = 'Up Coming'
+    upcoming = 'upcoming'
     past = 'Past'
 
 
@@ -84,7 +84,6 @@ class TravelStatus(str, Enum):
 
 
 class BookTicketCreate(BaseModel):
-    ticket_id:int
     passenger_id:int 
     bus_id: int  
     leaving_from: str
@@ -162,10 +161,11 @@ class BookedSeatsResponse(BookedSeatsCreate):
 
 class DepatureCreate(BaseModel):
     bus_id:int 
+    route_id: int
     depature_time:datetime    
 
 class DepatureResponse(DepatureCreate):
-    bus = BusResponse
+    bus:BusResponse
     class Config:
         orm_mode = True
 

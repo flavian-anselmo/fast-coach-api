@@ -149,5 +149,7 @@ class Depature(Base):
     __tablename__ = 'depature_tbl'
     dep_id = Column(Integer, primary_key = True, nullable = False)
     bus_id = Column(Integer, ForeignKey('bus_tbl.bus_id'), nullable = False)
+    route_id = Column(Integer, ForeignKey('travel_route_tbl.route_id'), nullable = False)
+    route = relationship('TravelRoute')
     bus = relationship('Bus')
     depature_time = Column(TIMESTAMP(timezone = True), nullable = True)

@@ -12,7 +12,7 @@ get req
 '''
 
 
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import List
 from fastapi import APIRouter
 from sqlalchemy.orm import session
@@ -142,31 +142,31 @@ async def get_ticket_booked(db:session = Depends(get_db), curr_user:int = Depend
     
 
     
-@router.get('/bus', response_model=List[schemas.BusResponse])
+@router.get('/bus', response_model=List[schemas.DepatureResponse])
 async def get_bus_routes(leaving_from:str, going_to:str, db:session =  Depends(get_db), curr_user:int = Depends(oauth2.get_current_user_logged_in)):
     '''
     get a bus to book with specific filter with travel location 
 
-    - leaving_from 
-    - going_to 
+    - leaving_from (depature)
+    - going_to (destination)
+    - depature_time (based on the date placed)
 
     '''
-    try:
+    
+    bus_routes_join = db.query(models.Depature).join(models.TravelRoute, models.Depature.route_id == models.TravelRoute.route_id)
+    bus_routes =  bus_routes_join.filter(models.TravelRoute.going_to.__eq__(going_to) and models.TravelRoute.leaving_from.__eq__(leaving_from)).all()
+    if not bus_routes:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='routes not found')
+    return bus_routes
 
-        bus_routes_join = db.query(models.Bus).join(models.TravelRoute, models.Bus.route_id == models.TravelRoute.route_id, isouter = True)
-        bus_routes =  bus_routes_join.filter(models.TravelRoute.going_to.__eq__(going_to) and models.TravelRoute.leaving_from.__eq__(leaving_from)).all()
-        if not bus_routes:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='routes not found')
-        return bus_routes
-    except Exception as error:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))
 
 
 # ------------------------------------------------------[SEAT TRACKING]---------------------------------------------------------------------------------------------------------
 @router.get('/bookedseats', response_model= List[schemas.BookedSeatsResponse])
 async def get_all_booked_seats(db:session = Depends(get_db), curr_user:int = Depends(oauth2.get_current_user_logged_in)):
     '''
-    get all booked seats 
+    get all booked seats     except Exception as error:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))
 
     '''
     try:
@@ -195,3 +195,33 @@ async def get_all_depatures(db:session = Depends(get_db), curr_user:int = Depend
     except Exception as error:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))
     
+
+# --------------------------------------[upcoming travels]------------------------------------------------------------------------------
+@router.get('/bookings/upcoming', response_model = List[schemas.BookTicketResponse])
+async def get_all_upcoming_travels(db:session = Depends(get_db), curr_user:int = Depends(oauth2.get_current_user_logged_in)):
+    '''
+    get all the upcoming travels 
+
+    '''
+    
+    upcoming = db.query(models.BookTicket).filter(models.BookTicket.travel_status == schemas.TravelStatus.upcoming).all()
+    if not upcoming:
+        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail='No upcoming travels, Kindly Book travel')
+    return upcoming
+   
+
+
+
+# -------------------------------------[past travels]-----------------------------------------------------------------------------
+@router.get('/bookings/past', response_model = List[schemas.BookTicketResponse])
+async def get_all_past_travels(db:session = Depends(get_db), curr_user = Depends(oauth2.get_current_user_logged_in)):
+    '''
+    get the travel history of a user 
+
+    '''
+    past_travel = db.query(models.BookTicket).filter(models.BookTicket.travel_status == schemas.TravelStatus.past).all()
+    if not past_travel:
+        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail='No past travels, Kindly Book travel')
+    return past_travel
+    
+
