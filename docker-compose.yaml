@@ -1,26 +1,10 @@
-# version: '3'
+version: '3'
 
-# services:
+services:
 
-#   api:
-#     build: .
-#     depends_on:
-#       - postgres
-#     ports:
-#       - 8000:8000
-#     volumes:
-#       - ./:/usr/src/app:ro
-#     command: uvicorn app.main:app --host 0.0.0.0 --reload 
-#     env_file:
-#       - ./.env
-  
-#   postgres:
-#     image: postgres
-#     environment:
-#       - POSTGRES_PASSWORD=cJHlqoYhEWpr8IwZzi04
-#       - POSTGRES_DB=railway
-#     volumes:
-#       - postgres-db:/var/lib/postgresql/data
+  fast.coach.api:
+    build: .
+    ports:
+      - 8000:8000
       
-# volumes:
-#   postgres-db: 
+    
