@@ -47,7 +47,7 @@ async def reduce_no_seats(bus_id:int, db:session):
             db.commit()
             db.refresh(seat)
             return seat 
-        return {'message':'The bus is fully booked'}    
+        return {'message':'The bus is fully booked'}  
     except Exception as error:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))
     

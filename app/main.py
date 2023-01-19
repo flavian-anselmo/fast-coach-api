@@ -57,7 +57,7 @@ app.include_router(payments.router)
 # root 
 @app.get("/")
 def read_root():
-    return {"message": "Fast.Coach.API"}
+    return {"message": "Fast.Coach.API [Bus Ticket Booking]"}
 
 
 
