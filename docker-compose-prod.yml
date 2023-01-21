@@ -6,36 +6,35 @@ services:
     image: ungaya/fast-coach-api-fast.coach.api
     depends_on:
       - postgres-db
-    command:  uvicorn app.main:app --host 0.0.0.0 --port 8000
+    command:  uvicorn app.main:app --host 0.0.0.0 --port $PORT
     ports:
       - 8000:8000
     
-    env_file:
-      - ./.env
-    
     environment:
+        #Db
+      - DATABASE_HOST=containers-us-west-152.railway.app 
+      - DATABASE_PASSWORD=cJHlqoYhEWpr8IwZzi04 
+      - DATABASE_NAME=railway
+      - DATABASE_USERNAME=postgres 
+      - DATABASE_PORT=7477 
 
-      - DATABASE_HOST = localhost
-      - DATABASE_PASSWORD = anselmo
-      - DATABASE_NAME = fast-coach-db
-      - DATABASE_USERNAME = postgres
-      - DATABASE_PORT=8000
+      #jwt
+      - ALGORITHM=HS256
+      - SECRET_KEY=09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7
+      - ACCESS_TOKEN_EXPIRATION_TIME=1440
 
-      - ALGORITHM = HS256
-      - SECRET_KEY =  09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7
-      - ACCESS_TOKEN_EXPIRATION_TIME = 1440
-
-      - AFRICAS_TALKING_API_KEY = 5385dfb553bd3ad9d181a3b87f04f5ee307ef84a776f294eeef34609b900a658
-      - AFRICAS_TALKING_ENV = sandbox
-      - SENDER_CODE = 1795
+      #africas_talking
+      - AFRICAS_TALKING_API_KEY=5385dfb553bd3ad9d181a3b87f04f5ee307ef84a776f294eeef34609b900a658
+      - AFRICAS_TALKING_ENV=sandbox
+      - SENDER_CODE=1795
  
   
   postgres-db:
     image: postgres
     
     environment:
-      - POSTGRES_PASSWORD=anselmo
-      - POSTGRES_DB=fast-coach-db
+      - POSTGRES_PASSWORD=cJHlqoYhEWpr8IwZzi04
+      - POSTGRES_DB=railway
     volumes:
       - postgres-db-v:/var/lib/postgresql/data
 

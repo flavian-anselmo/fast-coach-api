@@ -142,7 +142,7 @@ async def get_ticket_booked(db:session = Depends(get_db), curr_user:int = Depend
     
 
     
-@router.get('/bus', response_model=List[schemas.DepatureResponse])
+@router.get('/buses', response_model=List[schemas.DepatureResponse])
 async def get_bus_routes(leaving_from:str, going_to:str, db:session =  Depends(get_db), curr_user:int = Depends(oauth2.get_current_user_logged_in)):
     '''
     get a bus to book with specific filter with travel location 
@@ -165,8 +165,7 @@ async def get_bus_routes(leaving_from:str, going_to:str, db:session =  Depends(g
 @router.get('/bookedseats', response_model= List[schemas.BookedSeatsResponse])
 async def get_all_booked_seats(db:session = Depends(get_db), curr_user:int = Depends(oauth2.get_current_user_logged_in)):
     '''
-    get all booked seats     except Exception as error:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error))
+    get all booked seats 
 
     '''
     try:
