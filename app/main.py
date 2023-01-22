@@ -1,11 +1,9 @@
-from datetime import timedelta
 from fastapi import Depends, FastAPI
-from . import models
 from app.database import engine, get_db
 from app.routers import users, auth, admin, bookings, payments
-from sqlalchemy.orm import session
 from fastapi.middleware.cors import CORSMiddleware
 
+from .tasks import divide
 
 
 # models.Base.metadata.create_all(bind=engine)# create tbls for us 
@@ -28,6 +26,10 @@ app = FastAPI(
         "url": "https://www.apache.org/licenses/LICENSE-2.0.html",
     },
 )
+
+
+
+
 
 origins = [
     '*'
@@ -57,6 +59,7 @@ app.include_router(payments.router)
 # root 
 @app.get("/")
 def read_root():
+    divide.delay(4, 2) # background task 
     return {"message": "Fast.Coach.API [Bus Ticket Booking]"}
 
 
