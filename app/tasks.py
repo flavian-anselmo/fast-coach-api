@@ -3,21 +3,24 @@ background, periodic tasks with celery
 
 '''
 
-'''import celery -> '''
-from celery import Celery
+from celery import  Celery
+from celery.utils.log import get_task_logger
 
-''' celery instance > '''
+celery_log = get_task_logger(__name__)
+
+
+
 celery_app = Celery(
-    'tasks',
+    'app',
     broker = 'amqp://papa:admin@localhost:5672',
     #backend = 'rabbitmq'
 )
 
 
-''' celery task '''
 @celery_app.task
-def divide(x, y):
+def add(x:int, y:int):
     import time
     time.sleep(5)
-    res = x / y
-    return {'message': f'the answer is {res}'}
+    res = x + y
+    celery_log.info(f"Order Complete!")
+    return res

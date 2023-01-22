@@ -1,13 +1,11 @@
-from fastapi import Depends, FastAPI
-from app.database import engine, get_db
+from fastapi import FastAPI
+
 from app.routers import users, auth, admin, bookings, payments
 from fastapi.middleware.cors import CORSMiddleware
 
-from .tasks import divide
 
 
 # models.Base.metadata.create_all(bind=engine)# create tbls for us 
-
 
 
 app = FastAPI(
@@ -26,6 +24,7 @@ app = FastAPI(
         "url": "https://www.apache.org/licenses/LICENSE-2.0.html",
     },
 )
+
 
 
 
@@ -57,10 +56,9 @@ app.include_router(payments.router)
 # tasks with scheduled intervals 
 
 # root 
-@app.get("/")
-def read_root():
-    divide.delay(4, 2) # background task 
-    return {"message": "Fast.Coach.API [Bus Ticket Booking]"}
+
+
+
 
 
 
