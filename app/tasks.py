@@ -14,7 +14,9 @@ celery_app = Celery(
     'app',
     broker = 'amqp://papa:admin@localhost:5672',
     #backend = 'rabbitmq'
+    incude=["app.tasks"]
 )
+
 
 
 @celery_app.task
@@ -23,4 +25,4 @@ def add(x:int, y:int):
     time.sleep(5)
     res = x + y
     celery_log.info(f"Order Complete!")
-    return res
+    return {"message":f"then answ is {res}"}

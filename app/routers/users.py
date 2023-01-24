@@ -17,7 +17,7 @@ router = APIRouter(
 @router.get("/root")
 def read_root():
     res = add.delay(4, 2) # background task 
-    return {"message": res.task_id}
+    return {"message": "succesfull"}
 
 
 
