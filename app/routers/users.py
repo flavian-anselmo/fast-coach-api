@@ -1,9 +1,10 @@
 from typing import List
 from fastapi import Depends, HTTPException, status, APIRouter
-from psycopg2 import IntegrityError
 from app import models, schemas, oauth2, utils
+from app.tasks import add
 from app.database import get_db
 from sqlalchemy.orm import session
+
 
 
 router = APIRouter(
@@ -13,6 +14,10 @@ router = APIRouter(
 
 
 
+@router.get("/root")
+def read_root():
+    res = add.delay(4, 2) # background task 
+    return {"message": "succesfull"}
 
 
 
